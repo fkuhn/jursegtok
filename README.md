@@ -8,7 +8,7 @@ found in german law texts.
 
 ## References
 
-* [Juristische Abkuerzungen](www.juristische-abkuerzungen.de)
+* [Juristische Abkuerzungen](http://www.juristische-abkuerzungen.de)
 
 * [nltk documentation](http://www.nltk.org/_modules/nltk/tokenize/punkt.html)
 
