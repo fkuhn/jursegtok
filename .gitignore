@@ -113,3 +113,6 @@ docs/_build/
 target/
 
 
+
+build
+src/jursegtok.egg-info

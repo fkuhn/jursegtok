@@ -30,7 +30,7 @@ setup(name='jursegtok',
     url='www.ids-mannheim.de',
     license='Apache v2',
     packages=find_packages('src'),
-    package_dir = {'': 'src'},include_package_data=True,
+    package_dir = {'': 'src'}, include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
     entry_points={

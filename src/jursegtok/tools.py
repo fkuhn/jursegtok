@@ -16,7 +16,7 @@ HTML_PARSER = etree.HTMLParser()
 def segtok_sent_generator(document):
     """
     returns a generator over the sentences of a document.
-    each sentence is represented as a string.
+    each jursegtok is represented as a string.
 
     Parameters
     ----------
