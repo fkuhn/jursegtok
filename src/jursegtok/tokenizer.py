@@ -2,15 +2,17 @@ __author__ = 'kuhn'
 
 import nltk
 import codecs
-
+import os
+JUR = '../../data/legal_abbrv.txt'
+COMMON = '../../data/common_abbrv.txt'
 
 class JurSentTokenizer(object):
 
     def __init__(self):
 
-        self.jur_abbreviations = codecs.open('../../data/legal_abbrv.txt', encoding='utf-8').readlines()
+        self.jur_abbreviations = codecs.open(os.path.abspath(JUR), encoding='utf-8').readlines()
 
-        self.common_abbreviations = codecs.open('../../data/common_abbrv.txt', encoding='utf-8').readlines()
+        self.common_abbreviations = codecs.open(os.path.abspath(COMMON), encoding='utf-8').readlines()
 
         self.sent_tokenizer = nltk.data.load('tokenizers/punkt/german.pickle')
 
