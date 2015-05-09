@@ -9,6 +9,9 @@ from segtok.segmenter import split_single, split_multi
 from segtok import segmenter
 from sklearn.feature_extraction.text import CountVectorizer
 
+# define constants
+HTML_PARSER = etree.HTMLParser()
+
 
 def segtok_sent_generator(document):
     """
@@ -25,6 +28,15 @@ def segtok_sent_generator(document):
         for sentence in segmenter.split_multi(segment):
             if sentence.strip():
                 yield sentence
+
+
+def sklearn_toksent_generator(corpus_path):
+    ojcorpus = OJCorpus(OJCORPUS_DIR)
+    for fname, sentences in ojcorpus:
+        for sentence in sentences:
+            tokenized_sentence = tokenizer(sentence)
+            if len(tokenized_sentence) > 1:
+                yield tokenized_sentence
 
 
 class OJCorpus(object):
@@ -47,4 +59,5 @@ class OJCorpus(object):
             tree = etree.parse(os.path.join(self.corpus_path, file_name), parser=HTML_PARSER)
         except AssertionError:
             logging.error('Assertion Error. No Root: ' + file_name)
+            return
         return file_name, segtok_sent_generator(tree.xpath('//article//text()'))
