@@ -3,8 +3,10 @@ __author__ = 'kuhn'
 import nltk
 import codecs
 import os
-JUR = '../../data/legal_abbrv.txt'
-COMMON = '../../data/common_abbrv.txt'
+
+JUR = '/home/kuhn/Data/GitHub/jursegtok/data/legal_abbrv.txt'
+COMMON = '/home/kuhn/Data/GitHub/jursegtok/data/common_abbrv.txt'
+
 
 class JurSentTokenizer(object):
 
@@ -24,8 +26,7 @@ class JurSentTokenizer(object):
         for abbrev in self.common_abbreviations:
             abbrev.rstrip('.')
 
-        self.sent_tokenizer._params.abbrev_types.update(set(self.jur_abbreviations))
-        self.sent_tokenizer._params.abbrev_types.update(set(self.common_abbreviations))
+        self.sent_tokenizer._params.abbrev_types.update(set(self.common_abbreviations), set(self.jur_abbreviations))
 
     def sentence_tokenize(self, data):
 
