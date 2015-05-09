@@ -12,6 +12,8 @@ class JurSentTokenizer(object):
 
         self.common_abbreviations = codecs.open('../../data/common_abbrv.txt', encoding='utf-8').readlines()
 
+        self.sent_tokenizer = nltk.data.load('tokenizers/punkt/german.pickle')
+
         # must remove ending abbreviation stops to feed as parameters.
         # inline abbreviation stops are kept
         for abbrev in self.jur_abbreviations:
@@ -19,8 +21,6 @@ class JurSentTokenizer(object):
 
         for abbrev in self.common_abbreviations:
             abbrev.rstrip('.')
-
-        self.sent_tokenizer = nltk.data.load('tokenizers/punkt/german.pickle')
 
         self.sent_tokenizer._params.abbrev_types.update(set(self.jur_abbreviations))
         self.sent_tokenizer._params.abbrev_types.update(set(self.common_abbreviations))
