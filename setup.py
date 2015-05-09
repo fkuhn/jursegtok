@@ -4,7 +4,7 @@ import sys, os
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.md')).read()
-NEWS = open(os.path.join(here, 'NEWS.txt')).read()
+NEWS = open(os.path.join(here, 'NEWS.md')).read()
 
 
 version = '0.1'
