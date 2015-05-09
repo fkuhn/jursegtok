@@ -963,6 +963,7 @@ WVG
 WZG
 WährG
 z.A.
+z.B.
 ZaltorientbiblRg
 ZDG
 ZeitG
