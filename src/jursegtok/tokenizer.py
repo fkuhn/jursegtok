@@ -26,7 +26,7 @@ class JurSentTokenizer(object):
         for abbrev in self.common_abbreviations:
             abbrev.rstrip('.')
 
-        self.sent_tokenizer._params.abbrev_types.update(set(self.common_abbreviations), set(self.jur_abbreviations))
+        # self.sent_tokenizer._params.abbrev_types.update(set(self.common_abbreviations), set(self.jur_abbreviations))
 
     def sentence_tokenize(self, data):
 
