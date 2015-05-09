@@ -6,7 +6,7 @@ import codecs
 
 class JurSentTokenizer(object):
 
-    def _init__(self):
+    def __init__(self):
 
         self.jur_abbreviations = codecs.open('../../data/legal_abbrv.txt', encoding='utf-8').readlines()
 
