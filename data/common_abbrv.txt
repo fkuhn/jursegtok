@@ -13,7 +13,7 @@ Abg.
 AbgG
 ABl
 ABl.EG
-Abs
+Abs.
 AbsichG
 AbwAG
 AbwHerkV

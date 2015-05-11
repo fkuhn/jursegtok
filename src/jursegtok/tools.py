@@ -11,6 +11,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 # define constants
 HTML_PARSER = etree.HTMLParser()
+OJCORPUS_DIR = '/home/kuhn/Data/ojc_joint_set'
+tokenizer = CountVectorizer().build_tokenizer()
 
 
 def segtok_sent_generator(document):
@@ -31,7 +33,7 @@ def segtok_sent_generator(document):
 
 
 def sklearn_toksent_generator(corpus_path):
-    ojcorpus = OJCorpus(OJCORPUS_DIR)
+    ojcorpus = OJCorpus(corpus_path)
     for fname, sentences in ojcorpus:
         for sentence in sentences:
             tokenized_sentence = tokenizer(sentence)
