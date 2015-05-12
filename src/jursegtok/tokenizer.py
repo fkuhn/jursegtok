@@ -34,8 +34,8 @@ class JurSentTokenizer(object):
 
     def sentence_tokenize(self, data):
 
-        return self.sent_tokenizer.tokenize(data)
-
+        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(data))
+        return sentences
 
     def check_abbrev(self, sentences):
         """
