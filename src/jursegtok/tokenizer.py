@@ -8,8 +8,8 @@ from segtok import tokenizer
 from segtok import segmenter
 from segtok import segmenter_test
 
-JUR = '/home/kuhn/PycharmProjects/jursegtok/data/legal_abbrv.txt'
-COMMON = '/home/kuhn/PycharmProjects/jursegtok/data/common_abbrv.txt'
+JUR = '/home/kuhn/Data/GitHub/jursegtok/data/legal_abbrv.txt'
+COMMON = '/home/kuhn/Data/GitHub/jursegtok/data/common_abbrv.txt'
 
 
 class JurSentTokenizer(object):
@@ -46,7 +46,7 @@ class JurSentTokenizer(object):
 
         for sentence in sentences:
 
-                tokens = tokenizer.web_tokenizer(sentence)
+                tokens = tokenizer.space_tokenizer(sentence)
                 if tokens[-2] in self.common_abbreviations and tokens[-1] == u'.':
                     tokens[-2] = tokens[-2]+u'.'
                     tokens.remove(tokens[-1])
@@ -56,4 +56,6 @@ class JurSentTokenizer(object):
                     sentence_update = u' '.join(tokens)
                     sentences[sentences.index(sentence)] = sentence_update
                     sentences = sentences.remove(sentences[sentences.index(sentence)+1])
+                    return sentences
+                else:
                     return sentences
