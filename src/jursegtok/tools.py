@@ -17,6 +17,22 @@ tokenizer = CountVectorizer().build_tokenizer()
 jur_segmenter = hickle.load('/home/kuhn/PycharmProjects/jursegtok/data/jursentok.hkl', safe=False)
 
 
+def open_remote_corpus():
+    """
+    opens the remote corpus resource via ssh
+    :return:
+    """
+    pass
+
+def count_tokens(corpuspath):
+    tokens_count = int()
+    tok_generator = sklearn_tokjursent_generator(corpuspath)
+    for tokenized_sentence in tok_generator:
+        tokenlen = len(tokenized_sentence)
+        tokens_count += tokenlen
+    return tokens_count
+
+
 def count_sentences(corpusiterator):
     """
     counts all sentences a corpusiterator
