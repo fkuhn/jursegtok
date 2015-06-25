@@ -3,13 +3,13 @@ __author__ = 'kuhn'
 import nltk
 import codecs
 import os
-
+import hickle
 from segtok import tokenizer
 from segtok import segmenter
 from segtok import segmenter_test
 
-JUR = '/home/kuhn/Data/GitHub/jursegtok/data/legal_abbrv.txt'
-COMMON = '/home/kuhn/Data/GitHub/jursegtok/data/common_abbrv.txt'
+JUR = '/home/kuhn/PycharmProjects/jursegtok/data/legal_abbrv.txt'
+COMMON = '/home/kuhn/PycharmProjects/jursegtok/data/common_abbrv.txt'
 
 
 class JurSentTokenizer(object):
@@ -20,7 +20,8 @@ class JurSentTokenizer(object):
 
         self.common_abbreviations = codecs.open(os.path.abspath(COMMON), encoding='utf-8').readlines()
 
-        self.sent_tokenizer = nltk.data.load('tokenizers/punkt/german.pickle')
+        self.sent_tokenizer = hickle.load('../data/jursentok.hkl', safe=False)
+        self.sent_tokenizer_alt = hickle.load('../data/jursentok1500.hkl', safe=False)
 
         # must remove ending abbreviation stops to feed as parameters.
         # inline abbreviation stops are kept
@@ -35,7 +36,13 @@ class JurSentTokenizer(object):
     def sentence_tokenize(self, data):
 
         sentences = self.check_abbrev(self.sent_tokenizer.tokenize(data))
-        return sentences
+        sentences_alt = self.check_abbrev(self.sent_tokenizer_alt.tokenize(data))
+        if len(sentences) > len(sentences_alt):
+            return sentences_alt
+        elif len(sentences) > len(sentences_alt):
+            return sentences
+        else:
+            return sentences
 
     def check_abbrev(self, sentences):
         """
