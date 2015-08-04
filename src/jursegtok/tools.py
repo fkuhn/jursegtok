@@ -93,6 +93,27 @@ def sklearn_tokjursent_generator(corpus_path):
                 yield tokenized_sentence
 
 
+class OJCorpusPOSIterator(object):
+    """
+    Iterator that takes a corpuspath and returns a filename and an
+    ordered list of token-POS tuples of an document.
+    """
+    def __init__(self, corpus_path):
+        self.corpus_path = os.path.abspath(corpus_path)
+        self.file_names = iter(os.listdir(self.corpus_path))
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        file_name = self.file_names.next()
+
+        try:
+
+        except:
+
+
+
 class OJCorpusPlain(object):
     """
     returns a plain textstring of a file
@@ -110,7 +131,7 @@ class OJCorpusPlain(object):
         try:
             tree = etree.parse(os.path.join(self.corpus_path, file_name), parser=HTML_PARSER)
         except AssertionError:
-            logging.error('Assertion Error. No Root: ' + file_name)
+            logging.error('Assertion Error. No root: ' + file_name)
             return
         return file_name, ' '.join(tree.xpath('//article//text()'))
 
