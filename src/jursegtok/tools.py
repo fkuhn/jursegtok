@@ -5,6 +5,7 @@ import os
 import codecs
 import logging
 from lxml import etree
+from jursegtok import tokenizer
 
 import hickle
 # from segtok.segmenter import split_single, split_multi
@@ -15,8 +16,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 # define constants
 HTML_PARSER = etree.HTMLParser()
 OJCORPUS_DIR = '/home/kuhn/Data/ojc_joint_set'
-tokenizer = CountVectorizer().build_tokenizer()
-# jurtokenizer = tokenizer.JurSentTokenizer()
+
+count_tokenizer = CountVectorizer().build_tokenizer()
+
 jur_segmenter = hickle.load('/home/kuhn/github/jursegtok/data/jursentok.hkl', safe=False)
 
 HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
@@ -30,11 +32,12 @@ def convert2sentences(corpuspath, outputpath):
     :return:
     """
     corpus = OJCorpusPlain(corpuspath)
-    output = os.path.abspath(outputpath)
+    output = os.path.abspath(outputpath)	
+    jst = tokenizer.JurSentTokenizer()
     for name, document in corpus:
 
         with codecs.open(os.path.join(output, name.rstrip('.html')+'_sentences.txt'), encoding='utf-8', mode='w') as sentencetokenized:
-            tokenized = sentencelist2string(jur_segmenter.tokenize(document))
+            tokenized = sentencelist2string(jst.sentence_tokenize(document))
             sentencetokenized.write(tokenized)
         sentencetokenized.close()
 
@@ -116,7 +119,7 @@ def sklearn_toksent_generator(corpus_path):
     ojcorpus = OJCorpus(corpus_path)
     for fname, sentences in ojcorpus:
         for sentence in sentences:
-            tokenized_sentence = tokenizer(sentence)
+            tokenized_sentence = count_tokenizer(sentence)
             if len(tokenized_sentence) > 1:
                 yield tokenized_sentence
 
@@ -125,7 +128,7 @@ def sklearn_tokjursent_generator(corpus_path):
     ojcorpus = OJCorpusJurSentTok(corpus_path)
     for fname, sentences in ojcorpus:
         for sentence in sentences:
-            tokenized_sentence = tokenizer(sentence)
+            tokenized_sentence = count_tokenizer(sentence)
             if len(tokenized_sentence) > 1:
                 yield tokenized_sentence
 
