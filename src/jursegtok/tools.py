@@ -1,21 +1,58 @@
+
 __author__ = 'kuhn'
 
 import os
 import codecs
-import nltk
 import logging
-import hickle
 from lxml import etree
-from segtok.segmenter import split_single, split_multi
+
+import hickle
+# from segtok.segmenter import split_single, split_multi
 from segtok import segmenter
 from sklearn.feature_extraction.text import CountVectorizer
+
 
 # define constants
 HTML_PARSER = etree.HTMLParser()
 OJCORPUS_DIR = '/home/kuhn/Data/ojc_joint_set'
 tokenizer = CountVectorizer().build_tokenizer()
-jur_segmenter = hickle.load('/home/kuhn/PycharmProjects/jursegtok/data/jursentok.hkl', safe=False)
+# jurtokenizer = tokenizer.JurSentTokenizer()
+jur_segmenter = hickle.load('/home/kuhn/github/jursegtok/data/jursentok.hkl', safe=False)
 
+HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
+
+
+def convert2sentences(corpuspath, outputpath):
+    """
+    converts raw ojc data to sentence segmented plaintext
+    :param corpuspath:
+    :param outputpath:
+    :return:
+    """
+    corpus = OJCorpusPlain(corpuspath)
+    output = os.path.abspath(outputpath)
+    for name, document in corpus:
+
+        with codecs.open(os.path.join(output, name.rstrip('.html')+'_sentences.txt'), encoding='utf-8', mode='w') as sentencetokenized:
+            tokenized = sentencelist2string(jur_segmenter.tokenize(document))
+            sentencetokenized.write(tokenized)
+        sentencetokenized.close()
+
+
+def sentencelist2string(sentencelist):
+    """
+    takes a list of sentences and returns a
+    concatenated string of all elements.
+    """
+    for element in sentencelist:
+        element.strip('\t\n')
+        if element in HEADERS:
+            element = element.uppercase()
+            element = element + '\n'
+
+    sentences = '\n'.join(sentencelist)
+
+    return sentences
 
 def open_remote_corpus():
     """
@@ -108,9 +145,6 @@ class OJCorpusPOSIterator(object):
     def next(self):
         file_name = self.file_names.next()
 
-        try:
-
-        except:
 
 
 
