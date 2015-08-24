@@ -8,8 +8,8 @@ from segtok import tokenizer
 from segtok import segmenter
 from segtok import segmenter_test
 
-JUR = '/home/kuhn/PycharmProjects/jursegtok/data/legal_abbrv.txt'
-COMMON = '/home/kuhn/PycharmProjects/jursegtok/data/common_abbrv.txt'
+JUR = '/home/kuhn/github/jursegtok/data/legal_abbrv.txt'
+COMMON = '/home/kuhn/github/jursegtok/data/common_abbrv.txt'
 
 
 class JurSentTokenizer(object):
