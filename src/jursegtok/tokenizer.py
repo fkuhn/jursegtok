@@ -8,8 +8,8 @@ from segtok import tokenizer
 from segtok import segmenter
 from segtok import segmenter_test
 
-JUR = '/home/kuhn/github/jursegtok/data/legal_abbrv.txt'
-COMMON = '/home/kuhn/github/jursegtok/data/common_abbrv.txt'
+JUR = '/home/kuhn/Dev/github/jursegtok/data/legal_abbrv.txt'
+COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
 
 
 class JurSentTokenizer(object):
@@ -18,9 +18,9 @@ class JurSentTokenizer(object):
 
         self.jur_abbreviations = codecs.open(os.path.abspath(JUR), encoding='utf-8').readlines()
 
-        self.common_abbreviations = codecs.open(os.path.abspath(COMMON), encoding='utf-8').re
-        self.sent_tokenizer = hickle.load(os.path.abspath('data/jursentok.hkl'), safe=False)
-        self.sent_tokenizer_alt = hickle.load(os.path.abspath('data/jursentok1500.hkl'), safe=False)
+        self.common_abbreviations = codecs.open(os.path.abspath(COMMON), encoding='utf-8').readlines()
+        self.sent_tokenizer = hickle.load(os.path.abspath('/home/kuhn/Dev/github/jursegtok/data/jursentok.hkl'), safe=False)
+        self.sent_tokenizer_alt = hickle.load(os.path.abspath('/home/kuhn/Dev/github/jursegtok/data/jursentok1500.hkl'), safe=False)
 
         # must remove ending abbreviation stops to feed as parameters.
         # inline abbreviation stops are kept

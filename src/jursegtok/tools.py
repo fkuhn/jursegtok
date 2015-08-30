@@ -1,9 +1,12 @@
 
 __author__ = 'kuhn'
-
+import shutil
 import os
 import codecs
 import logging
+import html2text
+import markdown
+import random
 from lxml import etree
 from jursegtok import tokenizer
 
@@ -19,14 +22,47 @@ OJCORPUS_DIR = '/home/kuhn/Data/ojc_joint_set'
 
 count_tokenizer = CountVectorizer().build_tokenizer()
 
-jur_segmenter = hickle.load('/home/kuhn/github/jursegtok/data/jursentok.hkl', safe=False)
+jur_segmenter = hickle.load('/home/kuhn/Dev/github/jursegtok/data/jursentok.hkl', safe=False)
 
 HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
 
 
+def random_sampling(corpuspath, outputpath, k=10):
+    """
+    randomly selects k elements from a corpus and
+    copies them to an output path
+    :param corpuspath:
+    :param number:
+    :return:
+    """
+    samples = random.sample(os.listdir(corpuspath), k)
+    for filename in samples:
+
+        shutil.copy(os.path.join(os.path.abspath(corpuspath),
+                                 filename), outputpath)
+
+
+def convert2markdown(corpuspath, outputpath):
+    """
+    converts raw html files of a corpus to markdown
+    :param corpuspath:
+    :param outputpath:
+    :return:
+    """
+    corpus = OJCorpusMarkdown(corpuspath)
+    output = os.path.abspath(outputpath)
+
+    for name, document in corpus:
+
+        with codecs.open(os.path.join(output, name.rstrip('.html')+'.md'), encoding='utf-8', mode='w') as mdown:
+
+            mdown.write(document)
+        mdown.close()
+
+
 def convert2sentences(corpuspath, outputpath):
     """
-    converts raw ojc data to sentence segmented plaintext
+    converts raw ojc data to sentence segmented plaintext files
     :param corpuspath:
     :param outputpath:
     :return:
@@ -57,12 +93,14 @@ def sentencelist2string(sentencelist):
 
     return sentences
 
+
 def open_remote_corpus():
     """
     opens the remote corpus resource via ssh
     :return:
     """
     pass
+
 
 def count_tokens(corpuspath):
     tokens_count = int()
@@ -149,7 +187,26 @@ class OJCorpusPOSIterator(object):
         file_name = self.file_names.next()
 
 
+class OJCorpusMarkdown(object):
+    """
+    returns a plain textstring of a file
+    """
+    def __init__(self, corpus_path):
+        self.corpus_path = os.path.abspath(corpus_path)
+        self.file_names = iter(os.listdir(self.corpus_path))
+        self.__mdowner = html2text.HTML2Text()
+    def __iter__(self):
+        return self
 
+    def next(self):
+        file_name = self.file_names.next()
+
+        try:
+            tree = etree.parse(os.path.join(self.corpus_path, file_name), parser=HTML_PARSER)
+        except AssertionError:
+            logging.error('AssertionError. No root' + file_name)
+            return
+        return file_name, html2text.html2text(etree.tostring(tree))
 
 class OJCorpusPlain(object):
     """
