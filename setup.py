@@ -35,6 +35,6 @@ setup(name='jursegtok',
     install_requires=install_requires,
     entry_points={
         'console_scripts':
-            ['jursegtok=jursegtok:main']
+            ['jursegtok=jursegtok:jursegtok']
     }
 )

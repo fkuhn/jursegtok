@@ -24,7 +24,10 @@ count_tokenizer = CountVectorizer().build_tokenizer()
 
 jur_segmenter = hickle.load('/home/kuhn/Dev/github/jursegtok/data/jursentok.hkl', safe=False)
 
-HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
+# HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
+
+
+HEADERS = [u'## Tenor', u'## Tatbestand', u'## Grunde', u'## Gründe', u'## Entscheidungsgründe', u'Entscheidungs']
 
 
 def random_sampling(corpuspath, outputpath, k=10):
@@ -40,6 +43,28 @@ def random_sampling(corpuspath, outputpath, k=10):
 
         shutil.copy(os.path.join(os.path.abspath(corpuspath),
                                  filename), outputpath)
+
+
+def extract_layout(htmldecision, outfile):
+    """
+    parses the overall structure of a decision
+    :param htmldecision:
+    :param outfile:
+    :return:
+    """
+
+
+
+def structure_markdown(mdowndecisionfile, outputpath, keywordlist=HEADERS):
+    """
+    structures the markdown elements
+    :param corpuspath:
+    :param outputpath:
+    :return:
+    """
+
+    decisionfile = markdown.markdownFromFile()
+    prep = markdown.build_preprocessors(decisionfile)
 
 
 def convert2markdown(corpuspath, outputpath):
