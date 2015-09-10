@@ -53,8 +53,6 @@ def extract_layout(htmldecision, outfile):
     :return:
     """
 
-
-
 def structure_markdown(mdowndecisionfile, outputpath, keywordlist=HEADERS):
     """
     structures the markdown elements
