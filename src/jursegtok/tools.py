@@ -91,7 +91,7 @@ def convert2sentences(corpuspath, outputpath):
     :return:
     """
     corpus = OJCorpusPlain(corpuspath)
-    output = os.path.abspath(outputpath)	
+    output = os.path.abspath(outputpath)
     jst = tokenizer.JurSentTokenizer()
     for name, document in corpus:
 
@@ -246,7 +246,8 @@ class OJCorpusPlain(object):
         file_name = self.file_names.next()
 
         try:
-            tree = etree.parse(os.path.join(self.corpus_path, file_name), parser=HTML_PARSER)
+            tree = etree.parse(os.path.join(self.corpus_path, file_name),
+             parser=HTML_PARSER)
         except AssertionError:
             logging.error('Assertion Error. No root: ' + file_name)
             return
@@ -257,7 +258,8 @@ class OJCorpusJurSentTok(object):
     """
     This class represents a corpus of openjur.de court decision HTML files
     as an Iterable over parsed documents.
-    Each parsed document is represented by a (filename, list of sentences) tuple.
+    Each parsed document is represented by a (filename, list of sentences)
+    tuple.
     """
     def __init__(self, corpus_path):
         self.corpus_path = os.path.abspath(corpus_path)
@@ -270,11 +272,13 @@ class OJCorpusJurSentTok(object):
         file_name = self.file_names.next()
 
         try:
-            tree = etree.parse(os.path.join(self.corpus_path, file_name), parser=HTML_PARSER)
+            tree = etree.parse(os.path.join(self.corpus_path, file_name),
+             parser=HTML_PARSER)
         except AssertionError:
             logging.error('Assertion Error. No Root: ' + file_name)
             return
-        return file_name, jursegment_sent_generator(tree.xpath('//article//text()'))
+        return file_name,
+         jursegment_sent_generator(tree.xpath('//article//text()'))
 
 
 class OJCorpus(object):

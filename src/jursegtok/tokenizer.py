@@ -49,7 +49,6 @@ class JurSentTokenizer(object):
         :param sentences:
         :return:
         """
-
         for sentence in sentences:
 
                 tokens = tokenizer.space_tokenizer(sentence)
