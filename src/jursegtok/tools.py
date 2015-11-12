@@ -279,8 +279,8 @@ class OJCorpusJurSentTok(object):
         except AssertionError:
             logging.error('Assertion Error. No Root: ' + file_name)
             return
-        return file_name,
-         jursegment_sent_generator(tree.xpath('//article//text()'))
+        return file_name, \
+			jursegment_sent_generator(tree.xpath('//article//text()'))
 
 
 class OJCorpus(object):
