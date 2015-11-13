@@ -24,7 +24,7 @@ OJCORPUS_DIR = '/home/kuhn/Data/ojc_joint_set'
 
 count_tokenizer = CountVectorizer().build_tokenizer()
 
-jur_segmenter = hickle.load('/home/kuhn/Dev/github/jursegtok/data/jursentok.hkl', safe=False)
+jur_segmenter = hickle.load('data/jursentok.hkl', safe=False)
 
 # HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
 
