@@ -11,7 +11,7 @@ import markdown
 import random
 from lxml import etree
 from jursegtok import tokenizer
-
+from segtok import tokenizer as segtoktokenizer
 import hickle
 # from segtok.segmenter import split_single, split_multi
 from segtok import segmenter
@@ -26,18 +26,17 @@ OJCORPUS_DIR = '/home/kuhn/Data/ojc_joint_set'
 
 count_tokenizer = CountVectorizer().build_tokenizer()
 
-
+jur_segmenter = hickle.load(get_data('jursentok.hkl'), safe=False)
 
 
 # HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
-
-
 HEADERS = [u'## Tenor', u'## Tatbestand', u'## Grunde', u'## Gründe', u'## Entscheidungsgründe', u'Entscheidungs']
-
 _ROOT = os.path.abspath(os.path.dirname(__file__))
+
+
 def get_data(path):
     return os.path.join(_ROOT, 'data', path)
-jur_segmenter = hickle.load(get_data('jursentok.hkl'), safe=False)
+
 
 def random_sampling(corpuspath, outputpath, k=10):
     """
@@ -201,6 +200,29 @@ def sklearn_tokjursent_generator(corpus_path):
             tokenized_sentence = count_tokenizer(sentence)
             if len(tokenized_sentence) > 1:
                 yield tokenized_sentence
+
+
+class OJCWordTokenIterator(object):
+    """
+    returns a plain textstring of a file
+    """
+    def __init__(self, corpus_path):
+        self.corpus_path = os.path.abspath(corpus_path)
+        self.file_names = iter(os.listdir(self.corpus_path))
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        file_name = self.file_names.next()
+
+        try:
+            tree = etree.parse(os.path.join(self.corpus_path, file_name),
+             parser=HTML_PARSER)
+        except AssertionError:
+            logging.error('Assertion Error. No root: ' + file_name)
+            return
+        return file_name, segtoktokenizer.tokenize(' '.join(tree.xpath('//article//text()')))
 
 
 class OJCorpusPOSIterator(object):
