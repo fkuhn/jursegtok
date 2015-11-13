@@ -31,6 +31,7 @@ setup(name='jursegtok',
     license='Apache v2',
     packages=find_packages('src'),
     package_dir = {'': 'src'}, include_package_data=True,
+    package_data = {'': ['data/*.txt', 'data/*.hkl']},
     zip_safe=False,
     install_requires=install_requires,
     entry_points={

@@ -18,19 +18,26 @@ from segtok import segmenter
 from sklearn.feature_extraction.text import CountVectorizer
 
 
+
+
 # define constants
 HTML_PARSER = etree.HTMLParser()
 OJCORPUS_DIR = '/home/kuhn/Data/ojc_joint_set'
 
 count_tokenizer = CountVectorizer().build_tokenizer()
 
-jur_segmenter = hickle.load('data/jursentok.hkl', safe=False)
+
+
 
 # HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
 
 
 HEADERS = [u'## Tenor', u'## Tatbestand', u'## Grunde', u'## Gründe', u'## Entscheidungsgründe', u'Entscheidungs']
 
+_ROOT = os.path.abspath(os.path.dirname(__file__))
+def get_data(path):
+    return os.path.join(_ROOT, 'data', path)
+jur_segmenter = hickle.load(get_data('jursentok.hkl'), safe=False)
 
 def random_sampling(corpuspath, outputpath, k=10):
     """
