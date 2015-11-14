@@ -104,7 +104,7 @@ class OJDocument(object):
         return segtoktokenizer.word_tokenizer(self.plain_text)
 
 
-def random_sampling(corpuspath, outputpath, k=10):
+def random_sampling(corpuspath, outputpath='/tmp', k=10, debug=False):
     """
     randomly selects k elements from a corpus and
     copies them to an output path
@@ -112,10 +112,12 @@ def random_sampling(corpuspath, outputpath, k=10):
     :param number:
     :return:
     """
-    samples = random.sample(os.listdir(corpuspath), k)
-    for filename in samples:
-        shutil.copy(os.path.join(os.path.abspath(corpuspath),
-                                 filename), outputpath)
+    files = list(find_files(corpuspath, '*.html.gz'))
+    samples = random.sample(files, k)
+    for filepath in samples:
+        shutil.copy(filepath, outputpath)
+        if debug:
+            print(os.path.basename(filepath))
 
 
 def convert2sentences(corpuspath, outputpath):
