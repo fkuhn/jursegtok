@@ -34,7 +34,7 @@ class JurSentTokenizer(object):
         param: abbreviations: file
         return: abbreviations: set
         """
-        abbrev_lines = codecs.open(utils.get_data('legal_abbrv.txt')), encoding = 'utf-8').readlines()
+        abbrev_lines = codecs.open(utils.get_data('legal_abbrv.txt'), encoding = 'utf-8').readlines()
         abbreviations = [unicode(abbrev.rstrip('\n')) for abbrev in abbrev_lines]
         abbreviations = set([unicode(abbrev.rstrip('.')) for abbrev in abbreviations])
         return abbreviations
@@ -47,7 +47,6 @@ class JurSentTokenizer(object):
         """
         tokenizer_object = hickle.load(utils.get_data(model)), safe = False)
         return tokenizer_object
-
 
 
     def sentence_tokenize(self, data):
