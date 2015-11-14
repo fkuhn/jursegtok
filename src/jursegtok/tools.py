@@ -184,23 +184,6 @@ def jursegment_sent_generator(document):
                 yield sentence
 
 
-def segtok_sent_generator(document):
-    """
-    returns a generator over the sentences of a document.
-    each jursegtok is represented as a string.
-
-    Parameters
-    ----------
-    document : list of str
-        a plain text document represented as a list of its segments
-        (extracted from their corresponding HTML elements)
-    """
-    for segment in document:
-        for sentence in segmenter.split_multi(segment):
-            if sentence.strip():
-                yield sentence
-
-
 def sklearn_toksent_generator(corpus_path):
     ojcorpus = OJCorpus(corpus_path)
     for fname, sentences in ojcorpus:
