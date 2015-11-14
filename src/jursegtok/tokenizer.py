@@ -6,7 +6,8 @@ import os
 import nltk
 
 import hickle
-import utils
+
+from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
 
