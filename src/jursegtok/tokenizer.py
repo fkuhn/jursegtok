@@ -19,7 +19,7 @@ class JurSentTokenizer(object):
 
         self.jur_abbreviations = self.get_abbreviations()
 
-        self.sent_tokenizer= self.get_tokenizer_model()
+        self.sent_tokenizer = self.get_tokenizer_model()
         self.sent_tokenizer_alt = self.get_tokenizer_model('jursentok1500.hkl')
 
         # must remove ending abbreviation stops to feed as parameters.
@@ -43,8 +43,13 @@ class JurSentTokenizer(object):
         Reads and prepares a pretrained tokenizer model hickle-serialized data.
         param: model: file
         return: tokenizer_object: tokenizer object
+
+        Parameters
+        ----------
+        model :
+
         """
-        tokenizer_object = hickle.load(get_data(model), safe = False)
+        tokenizer_object = hickle.load(get_data(model), safe=False)
         return tokenizer_object
 
 
