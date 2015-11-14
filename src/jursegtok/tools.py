@@ -31,7 +31,58 @@ count_tokenizer = CountVectorizer().build_tokenizer()
 HEADERS = [u'## Tenor', u'## Tatbestand', u'## Grunde',
            u'## Gründe', u'## Entscheidungsgründe', u'Entscheidungs']
 
+class OJCorpus(object):
+    """
+    This class represents a corpus of gzipped openjur.de court decision
+    HTML files as an Iterable over ``OJDocument`` instances.
+    """
+    def __init__(self, corpus_path):
+        self.corpus_path = os.path.abspath(corpus_path)
+        self.file_paths = find_files(corpus_path, '*.html.gz')
 
+    def regenerate_paths(self):
+        """
+        ``self.file_paths`` is a generator. If you have iterated over all
+        the files once, you'll need to call this method to iterate over them
+        again.
+        """
+        self.file_paths = find_files(self.corpus_path, '*.html.gz')
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return OJDocument(self.file_paths.next())
+
+
+class OJDocument(object):
+    """
+    This class represents a document from the openjur.de corpus of court
+    decisions in various formats.
+    """
+    def __init__(self, document_path):
+        self.document_path = document_path
+
+    @property
+    def filename(self):
+        return os.path.basename(self.document_path)
+
+    @property
+    def raw_html(self):
+        with gzip.open(self.document_path, 'r') as html_file:
+            return html_file.read()
+
+    @property
+    def plain_text(self):
+        try:
+            tree = etree.parse(self.document_path, parser=HTML_PARSER)
+        except AssertionError:
+            logging.error('Assertion Error. No Root: ' + self.document_path)
+        return u' '.join(tree.xpath('//article//text()'))
+
+    @property
+    def sentences(self):
+        raise NotImplementedError
 
 jur_segmenter = hickle.load(utils.get_data('jursentok.hkl'), safe=False)
 
@@ -239,28 +290,6 @@ class OJCorpusPOSIterator(object):
         file_name = self.file_names.next()
 
 
-class OJCorpusMarkdown(object):
-    """
-    returns a plain textstring of a file
-    """
-
-    def __init__(self, corpus_path):
-        self.corpus_path = os.path.abspath(corpus_path)
-        self.file_names = iter(os.listdir(self.corpus_path))
-        self.__mdowner = html2text.HTML2Text()
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        file_name = self.file_names.next()
-
-        try:
-            tree = etree.parse(os.path.join(self.corpus_path, file_name), parser=HTML_PARSER)
-        except AssertionError:
-            logging.error('AssertionError. No root' + file_name)
-            return
-        return file_name, html2text.html2text(etree.tostring(tree))
 
 
 class OJCorpusPlain(object):
@@ -315,26 +344,3 @@ class OJCorpusJurSentTok(object):
             jursegment_sent_generator(tree.xpath('//article//text()'))
 
 
-class OJCorpus(object):
-    """
-    This class represents a corpus of openjur.de court decision HTML files
-    as an Iterable over parsed documents.
-    Each parsed document is represented by a (filename, list of sentences) tuple.
-    """
-
-    def __init__(self, corpus_path):
-        self.corpus_path = os.path.abspath(corpus_path)
-        self.file_names = iter(os.listdir(self.corpus_path))
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        file_name = self.file_names.next()
-
-        try:
-            tree = etree.parse(os.path.join(self.corpus_path, file_name), parser=HTML_PARSER)
-        except AssertionError:
-            logging.error('Assertion Error. No Root: ' + file_name)
-            return
-        return file_name, segtok_sent_generator(tree.xpath('//article//text()'))
