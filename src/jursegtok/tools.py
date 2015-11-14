@@ -83,7 +83,7 @@ class OJDocument(object):
     def sentences(self):
         raise NotImplementedError
 
-jur_segmenter = hickle.load(utils.get_data('jursentok.hkl'), safe=False)
+jur_segmenter = hickle.load(get_data('jursentok.hkl'), safe=False)
 
 
 def random_sampling(corpuspath, outputpath, k=10):
