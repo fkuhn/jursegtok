@@ -29,6 +29,7 @@ JUR_SEGMENTER = hickle.load(get_data('jursentok.hkl'), safe=False)
 HEADERS = [u'## Tenor', u'## Tatbestand', u'## Grunde',
            u'## Gründe', u'## Entscheidungsgründe', u'Entscheidungs']
 
+
 class OJCorpus(object):
     """
     This class represents a corpus of gzipped openjur.de court decision
@@ -61,6 +62,14 @@ class OJDocument(object):
     def __init__(self, document_path):
         self.document_path = document_path
 
+    def _get_html_tree(self):
+        """returns an LXML etree representation of the input HTML file"""
+        try:
+            tree = etree.parse(self.document_path, parser=HTML_PARSER)
+        except AssertionError:
+            logging.error('Assertion Error. No Root: ' + self.document_path)
+        return tree
+
     @property
     def filename(self):
         return os.path.basename(self.document_path)
@@ -72,15 +81,17 @@ class OJDocument(object):
 
     @property
     def plain_text(self):
-        try:
-            tree = etree.parse(self.document_path, parser=HTML_PARSER)
-        except AssertionError:
-            logging.error('Assertion Error. No Root: ' + self.document_path)
+        tree = self._get_html_tree()
         return u' '.join(tree.xpath('//article//text()'))
 
     @property
     def sentences(self):
-        raise NotImplementedError
+        """
+        returns a list of sentences. Sentence segmentation is done using a
+        retrained nltk sentence tokenizer.
+        """
+        tree = self._get_html_tree()
+        return jursegment_sent_generator(tree.xpath('//article//text()'))
 
     @property
     def tokens(self):
@@ -173,23 +184,6 @@ def jursegment_sent_generator(document):
                 yield sentence
 
 
-def segtok_sent_generator(document):
-    """
-    returns a generator over the sentences of a document.
-    each jursegtok is represented as a string.
-
-    Parameters
-    ----------
-    document : list of str
-        a plain text document represented as a list of its segments
-        (extracted from their corresponding HTML elements)
-    """
-    for segment in document:
-        for sentence in segmenter.split_multi(segment):
-            if sentence.strip():
-                yield sentence
-
-
 def sklearn_toksent_generator(corpus_path):
     ojcorpus = OJCorpus(corpus_path)
     for fname, sentences in ojcorpus:
@@ -206,100 +200,4 @@ def sklearn_tokjursent_generator(corpus_path):
             tokenized_sentence = COUNT_TOKENIZER(sentence)
             if len(tokenized_sentence) > 1:
                 yield tokenized_sentence
-
-
-class OJCWordTokenIterator(object):
-    """
-    returns a plain textstring of a file
-    """
-
-    def __init__(self, corpus_path):
-        self.corpus_path = os.path.abspath(corpus_path)
-        self.file_names = iter(os.listdir(self.corpus_path))
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        file_name = self.file_names.next()
-
-        try:
-            tree = etree.parse(os.path.join(self.corpus_path, file_name),
-                               parser=HTML_PARSER)
-        except AssertionError:
-            logging.error('Assertion Error. No root: ' + file_name)
-            return
-        return file_name, segtoktokenizer.word_tokenizer(' '.join(tree.xpath('//article//text()')))
-
-
-class OJCorpusPOSIterator(object):
-    """
-    Iterator that takes a corpuspath and returns a filename and an
-    ordered list of token-POS tuples of an document.
-    """
-
-    def __init__(self, corpus_path):
-        self.corpus_path = os.path.abspath(corpus_path)
-        self.file_names = iter(os.listdir(self.corpus_path))
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        file_name = self.file_names.next()
-
-
-
-
-class OJCorpusPlain(object):
-    """
-    returns a plain textstring of a file
-    """
-
-    def __init__(self, corpus_path):
-        self.corpus_path = os.path.abspath(corpus_path)
-        self.file_names = iter(os.listdir(self.corpus_path))
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        file_name = self.file_names.next()
-
-        try:
-            tree = etree.parse(os.path.join(self.corpus_path, file_name),
-                               parser=HTML_PARSER)
-        except AssertionError:
-            logging.error('Assertion Error. No root: ' + file_name)
-            return
-        return file_name, ' '.join(tree.xpath('//article//text()'))
-
-
-class OJCorpusJurSentTok(object):
-    """
-    This class represents a corpus of openjur.de court decision HTML files
-    as an Iterable over parsed documents.
-    Each parsed document is represented by a (filename, list of sentences)
-    tuple.
-    """
-
-    def __init__(self, corpus_path):
-        self.corpus_path = os.path.abspath(corpus_path)
-        self.file_names = iter(os.listdir(self.corpus_path))
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        file_name = self.file_names.next()
-
-        try:
-            tree = etree.parse(os.path.join(self.corpus_path, file_name),
-                               parser=HTML_PARSER)
-        except AssertionError:
-            logging.error('Assertion Error. No Root: ' + file_name)
-            return
-        return file_name, \
-            jursegment_sent_generator(tree.xpath('//article//text()'))
-
 
