@@ -58,6 +58,7 @@ def extract_layout(htmldecision, outfile):
     :param outfile:
     :return:
     """
+    raise NotImplementedError
 
 
 def structure_markdown(mdowndecisionfile, outputpath, keywordlist=HEADERS):
@@ -129,7 +130,7 @@ def open_remote_corpus():
     opens the remote corpus resource via ssh
     :return:
     """
-    pass
+    raise NotImplementedError
 
 
 def count_tokens(corpuspath):
