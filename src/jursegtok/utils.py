@@ -36,6 +36,22 @@ def create_dir(path):
             raise
 
 def get_data(dataitem):
+def find_files(directory, pattern='*'):
+    """
+    find files recursively, e.g. all *.txt files
+    in a given directory (or its subdirectories)
+
+    adapted from: http://stackoverflow.com/a/2186673
+    """
+    import os
+    import fnmatch
+
+    abspath = os.path.abspath(os.path.expanduser(directory))
+    for root, dirs, files in os.walk(abspath):
+        for basename in files:
+            if fnmatch.fnmatch(basename, pattern):
+                filename = os.path.join(root, basename)
+                yield filename
     """
     given a _ROOT, returns the absolute path of a given data item
     """
