@@ -5,6 +5,7 @@ import os
 import sys
 import errno
 
+_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 def create_dir(path):
     """
@@ -26,10 +27,16 @@ def create_dir(path):
         if exc.errno == errno.EEXIST:
             if os.path.isdir(path):
                 pass
-            else: # if something exists at the path, but it's not a dir
+            else:  # if something exists at the path, but it's not a dir
                 raise
         elif exc.errno == errno.EACCES:
             sys.stderr.write("Cannot create [%s]! Check Permissions" % path)
             raise
         else:
             raise
+
+def get_data(dataitem):
+    """
+    given a _ROOT, returns the absolute path of a given data item
+    """
+    return os.path.join(_ROOT, 'data', dataitem)

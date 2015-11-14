@@ -2,23 +2,23 @@
 # -*- coding: utf-8 -*-
 
 __author__ = 'kuhn'
-import shutil
-import os
 import codecs
 import logging
-import html2text
-import markdown
+import os
 import random
-from lxml import etree
+import shutil
+
+import html2text
 from jursegtok import tokenizer
-from segtok import tokenizer as segtoktokenizer
-import hickle
-# from segtok.segmenter import split_single, split_multi
-from segtok import segmenter
+from lxml import etree
 from sklearn.feature_extraction.text import CountVectorizer
 
-
-
+import hickle
+import markdown
+import utils
+from segtok import tokenizer as segtoktokenizer
+# from segtok.segmenter import split_single, split_multi
+from segtok import segmenter
 
 # define constants
 HTML_PARSER = etree.HTMLParser()
@@ -28,14 +28,12 @@ count_tokenizer = CountVectorizer().build_tokenizer()
 
 
 # HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
-HEADERS = [u'## Tenor', u'## Tatbestand', u'## Grunde', u'## Gründe', u'## Entscheidungsgründe', u'Entscheidungs']
-_ROOT = os.path.abspath(os.path.dirname(__file__))
+HEADERS = [u'## Tenor', u'## Tatbestand', u'## Grunde',
+           u'## Gründe', u'## Entscheidungsgründe', u'Entscheidungs']
 
 
-def get_data(path):
-    return os.path.join(_ROOT, 'data', path)
 
-jur_segmenter = hickle.load(get_data('jursentok.hkl'), safe=False)
+jur_segmenter = hickle.load(utils.get_data('jursentok.hkl'), safe=False)
 
 
 def random_sampling(corpuspath, outputpath, k=10):
@@ -61,6 +59,7 @@ def extract_layout(htmldecision, outfile):
     :return:
     """
 
+
 def structure_markdown(mdowndecisionfile, outputpath, keywordlist=HEADERS):
     """
     structures the markdown elements
@@ -85,7 +84,7 @@ def convert2markdown(corpuspath, outputpath):
 
     for name, document in corpus:
 
-        with codecs.open(os.path.join(output, name.rstrip('.html')+'.md'), encoding='utf-8', mode='w') as mdown:
+        with codecs.open(os.path.join(output, name.rstrip('.html') + '.md'), encoding='utf-8', mode='w') as mdown:
 
             mdown.write(document)
         mdown.close()
@@ -103,7 +102,7 @@ def convert2sentences(corpuspath, outputpath):
     jst = tokenizer.JurSentTokenizer()
     for name, document in corpus:
 
-        with codecs.open(os.path.join(output, name.rstrip('.html')+'_sentences.txt'), encoding='utf-8', mode='w') as sentencetokenized:
+        with codecs.open(os.path.join(output, name.rstrip('.html') + '_sentences.txt'), encoding='utf-8', mode='w') as sentencetokenized:
             tokenized = sentencelist2string(jst.sentence_tokenize(document))
             sentencetokenized.write(tokenized)
         sentencetokenized.close()
@@ -206,6 +205,7 @@ class OJCWordTokenIterator(object):
     """
     returns a plain textstring of a file
     """
+
     def __init__(self, corpus_path):
         self.corpus_path = os.path.abspath(corpus_path)
         self.file_names = iter(os.listdir(self.corpus_path))
@@ -218,7 +218,7 @@ class OJCWordTokenIterator(object):
 
         try:
             tree = etree.parse(os.path.join(self.corpus_path, file_name),
-             parser=HTML_PARSER)
+                               parser=HTML_PARSER)
         except AssertionError:
             logging.error('Assertion Error. No root: ' + file_name)
             return
@@ -230,6 +230,7 @@ class OJCorpusPOSIterator(object):
     Iterator that takes a corpuspath and returns a filename and an
     ordered list of token-POS tuples of an document.
     """
+
     def __init__(self, corpus_path):
         self.corpus_path = os.path.abspath(corpus_path)
         self.file_names = iter(os.listdir(self.corpus_path))
@@ -245,10 +246,12 @@ class OJCorpusMarkdown(object):
     """
     returns a plain textstring of a file
     """
+
     def __init__(self, corpus_path):
         self.corpus_path = os.path.abspath(corpus_path)
         self.file_names = iter(os.listdir(self.corpus_path))
         self.__mdowner = html2text.HTML2Text()
+
     def __iter__(self):
         return self
 
@@ -262,10 +265,12 @@ class OJCorpusMarkdown(object):
             return
         return file_name, html2text.html2text(etree.tostring(tree))
 
+
 class OJCorpusPlain(object):
     """
     returns a plain textstring of a file
     """
+
     def __init__(self, corpus_path):
         self.corpus_path = os.path.abspath(corpus_path)
         self.file_names = iter(os.listdir(self.corpus_path))
@@ -278,7 +283,7 @@ class OJCorpusPlain(object):
 
         try:
             tree = etree.parse(os.path.join(self.corpus_path, file_name),
-             parser=HTML_PARSER)
+                               parser=HTML_PARSER)
         except AssertionError:
             logging.error('Assertion Error. No root: ' + file_name)
             return
@@ -292,6 +297,7 @@ class OJCorpusJurSentTok(object):
     Each parsed document is represented by a (filename, list of sentences)
     tuple.
     """
+
     def __init__(self, corpus_path):
         self.corpus_path = os.path.abspath(corpus_path)
         self.file_names = iter(os.listdir(self.corpus_path))
@@ -304,12 +310,12 @@ class OJCorpusJurSentTok(object):
 
         try:
             tree = etree.parse(os.path.join(self.corpus_path, file_name),
-             parser=HTML_PARSER)
+                               parser=HTML_PARSER)
         except AssertionError:
             logging.error('Assertion Error. No Root: ' + file_name)
             return
         return file_name, \
-			jursegment_sent_generator(tree.xpath('//article//text()'))
+            jursegment_sent_generator(tree.xpath('//article//text()'))
 
 
 class OJCorpus(object):
@@ -318,6 +324,7 @@ class OJCorpus(object):
     as an Iterable over parsed documents.
     Each parsed document is represented by a (filename, list of sentences) tuple.
     """
+
     def __init__(self, corpus_path):
         self.corpus_path = os.path.abspath(corpus_path)
         self.file_names = iter(os.listdir(self.corpus_path))

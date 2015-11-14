@@ -13,7 +13,7 @@ Abg.
 AbgG
 ABl
 ABl.EG
-Abs
+Abs.
 AbsichG
 AbwAG
 AbwHerkV
@@ -477,6 +477,8 @@ GG
 ggb.
 ggü.
 GGBefG
+gg.
+ggf.
 GGV
 GGVS
 GKG
@@ -965,6 +967,7 @@ WVG
 WZG
 WährG
 z.A.
+z.B.
 ZaltorientbiblRg
 ZDG
 ZeitG
