@@ -4,10 +4,11 @@ import codecs
 import os
 
 import nltk
-from jursegtok.tools import OJCorpusPlain
-from jursegtok.utils import get_data
 
 import hickle
+
+from jursegtok.corpus import OJDocument
+from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
 
@@ -35,10 +36,9 @@ class JurSentTokenizer(object):
         param: abbreviations: file
         return: abbreviations: set
         """
-        abbrev_lines = codecs.open(get_data('legal_abbrv.txt'), encoding='utf-8').readlines()
-        abbreviations = [unicode(abbrev.rstrip('\n')) for abbrev in abbrev_lines]
-        abbreviations = set([unicode(abbrev.rstrip('.')) for abbrev in abbreviations])
-        return abbreviations
+        abbrev_file = codecs.open(get_data('legal_abbrv.txt'), encoding='utf8')
+        return set(unicode(abbrev.strip().rstrip('.'))
+                   for abbrev in abbrev_file)
 
     def get_tokenizer_model(self, model='jursentok.hkl'):
         """
@@ -57,11 +57,21 @@ class JurSentTokenizer(object):
     def sentence_tokenize(self, textdata):
         """
         Takes a document string and returns a list of sentence segments.
-        param: texdata: string
-        return: sentences: list
-        """
-        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
 
+        Parameters
+        ----------
+        textdata : basestring or OJDocument
+            the input document
+
+        Returns
+        -------
+        sentences : list(basestring)
+            a list of sentences
+        """
+        if isinstance(textdata, OJDocument):
+            textdata = textdata.plain_text
+
+        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
         return sentences
 
     def check_abbrev(self, sentences):
