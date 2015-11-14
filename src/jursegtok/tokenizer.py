@@ -7,6 +7,7 @@ import nltk
 
 import hickle
 
+from jursegtok.corpus import OJDocument
 from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
