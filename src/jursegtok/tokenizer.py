@@ -4,10 +4,10 @@ import codecs
 import os
 
 import nltk
-from jursegtok.tools import OJCorpusPlain
-from jursegtok.utils import get_data
 
 import hickle
+
+from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
 
@@ -35,10 +35,9 @@ class JurSentTokenizer(object):
         param: abbreviations: file
         return: abbreviations: set
         """
-        abbrev_lines = codecs.open(get_data('legal_abbrv.txt'), encoding='utf-8').readlines()
-        abbreviations = [unicode(abbrev.rstrip('\n')) for abbrev in abbrev_lines]
-        abbreviations = set([unicode(abbrev.rstrip('.')) for abbrev in abbreviations])
-        return abbreviations
+        abbrev_file = codecs.open(get_data('legal_abbrv.txt'), encoding='utf8')
+        return set(unicode(abbrev.strip().rstrip('.'))
+                   for abbrev in abbrev_file)
 
     def get_tokenizer_model(self, model='jursentok.hkl'):
         """
