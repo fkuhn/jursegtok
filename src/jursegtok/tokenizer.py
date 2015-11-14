@@ -4,10 +4,10 @@ import codecs
 import os
 
 import nltk
+from jursegtok.tools import OJCorpusPlain
+from jursegtok.utils import get_data
 
 import hickle
-
-from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
 
@@ -15,11 +15,12 @@ from segtok import segmenter, segmenter_test, tokenizer
 
 
 class JurSentTokenizer(object):
+
     def __init__(self):
 
         self.jur_abbreviations = self.get_abbreviations()
 
-        self.sent_tokenizer= self.get_tokenizer_model()
+        self.sent_tokenizer = self.get_tokenizer_model()
         self.sent_tokenizer_alt = self.get_tokenizer_model('jursentok1500.hkl')
 
         # must remove ending abbreviation stops to feed as parameters.
@@ -34,9 +35,10 @@ class JurSentTokenizer(object):
         param: abbreviations: file
         return: abbreviations: set
         """
-        abbrev_file = codecs.open(get_data('legal_abbrv.txt'), encoding='utf8')
-        return set(unicode(abbrev.strip().rstrip('.'))
-                   for abbrev in abbrev_file)
+        abbrev_lines = codecs.open(get_data('legal_abbrv.txt'), encoding='utf-8').readlines()
+        abbreviations = [unicode(abbrev.rstrip('\n')) for abbrev in abbrev_lines]
+        abbreviations = set([unicode(abbrev.rstrip('.')) for abbrev in abbreviations])
+        return abbreviations
 
     def get_tokenizer_model(self, model='jursentok.hkl'):
         """
@@ -44,21 +46,18 @@ class JurSentTokenizer(object):
         param: model: file
         return: tokenizer_object: tokenizer object
         """
-        tokenizer_object = hickle.load(get_data(model), safe = False)
+        tokenizer_object = hickle.load(get_data(model), safe=False)
         return tokenizer_object
 
+    def sentence_tokenize(self, textdata):
+        """
+        Takes a document string and returns a list of sentence segments.
+        param: texdata: string
+        return: sentences: list
+        """
+        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
 
-    def sentence_tokenize(self, data):
-
-        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(data))
-        sentences_alt = self.check_abbrev(self.sent_tokenizer_alt.tokenize(data))
-        if len(sentences) > len(sentences_alt):
-            return sentences_alt
-        elif len(sentences) > len(sentences_alt):
-            return sentences
-        else:
-            return sentences
-
+        return sentences
 
     def check_abbrev(self, sentences):
         """
@@ -86,8 +85,25 @@ class JurSentTokenizer(object):
         """
         From a given list, add abbreviations to the tokenizer.
         Needs a list of abbreviations.
-
         :param abbreviations: list
         """
-        self.jur_abbreviations = self.jur_abbreviations.append(unicode(
-                                                        abbreviations))
+        self.jur_abbreviations.add(unicode(abbreviations))
+
+    def train_tokenizer(self, trainsetpath):
+        """
+        (Re-)trains the tokenizer from a given OJCorpusPlain iterator.
+        params: path to training set: string
+        """
+
+        trainset = OJCorpusPlain(trainsetpath)
+        trainer = nltk.tokenize.punkt.PunktTrainer()
+        trainer.INCLUDE_ALL_COLLOCS = True
+        trainer.INCLUDE_ABBREV_COLLOCS = True
+
+        for fname, document in trainset_iterator:
+            try:
+                trainer.train(document)
+            except:
+                continue
+        trainer.finalize_training()
+        self.sent_tokenizer = trainer.get_params()
