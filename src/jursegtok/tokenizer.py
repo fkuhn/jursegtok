@@ -35,10 +35,9 @@ class JurSentTokenizer(object):
         param: abbreviations: file
         return: abbreviations: set
         """
-        abbrev_lines = codecs.open(utils.get_data('legal_abbrv.txt'), encoding = 'utf-8').readlines()
-        abbreviations = [unicode(abbrev.rstrip('\n')) for abbrev in abbrev_lines]
-        abbreviations = set([unicode(abbrev.rstrip('.')) for abbrev in abbreviations])
-        return abbreviations
+        abbrev_file = codecs.open(get_data('legal_abbrv.txt'), encoding='utf8')
+        return set(unicode(abbrev.strip().rstrip('.'))
+                   for abbrev in abbrev_file)
 
     def get_tokenizer_model(model='jursentok.hkl'):
         """
