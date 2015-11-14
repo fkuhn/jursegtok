@@ -22,8 +22,8 @@ from segtok import segmenter
 # define constants
 HTML_PARSER = etree.HTMLParser()
 OJCORPUS_DIR = '/home/kuhn/Data/ojc_joint_set'
-
-count_tokenizer = CountVectorizer().build_tokenizer()
+COUNT_TOKENIZER = CountVectorizer().build_tokenizer()
+JUR_SEGMENTER = hickle.load(get_data('jursentok.hkl'), safe=False)
 
 
 # HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
@@ -83,7 +83,6 @@ class OJDocument(object):
     def sentences(self):
         raise NotImplementedError
 
-jur_segmenter = hickle.load(get_data('jursentok.hkl'), safe=False)
 
 
 def random_sampling(corpuspath, outputpath, k=10):
@@ -208,7 +207,7 @@ def jursegment_sent_generator(document):
     :return:
     """
     for segment in document:
-        for sentence in jur_segmenter.tokenize(segment):
+        for sentence in JUR_SEGMENTER.tokenize(segment):
             if sentence.strip():
                 yield sentence
 
@@ -234,7 +233,7 @@ def sklearn_toksent_generator(corpus_path):
     ojcorpus = OJCorpus(corpus_path)
     for fname, sentences in ojcorpus:
         for sentence in sentences:
-            tokenized_sentence = count_tokenizer(sentence)
+            tokenized_sentence = COUNT_TOKENIZER(sentence)
             if len(tokenized_sentence) > 1:
                 yield tokenized_sentence
 
@@ -243,7 +242,7 @@ def sklearn_tokjursent_generator(corpus_path):
     ojcorpus = OJCorpusJurSentTok(corpus_path)
     for fname, sentences in ojcorpus:
         for sentence in sentences:
-            tokenized_sentence = count_tokenizer(sentence)
+            tokenized_sentence = COUNT_TOKENIZER(sentence)
             if len(tokenized_sentence) > 1:
                 yield tokenized_sentence
 
