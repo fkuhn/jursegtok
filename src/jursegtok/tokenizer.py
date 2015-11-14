@@ -51,11 +51,21 @@ class JurSentTokenizer(object):
     def sentence_tokenize(self, textdata):
         """
         Takes a document string and returns a list of sentence segments.
-        param: texdata: string
-        return: sentences: list
-        """
-        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
 
+        Parameters
+        ----------
+        textdata : basestring or OJDocument
+            the input document
+
+        Returns
+        -------
+        sentences : list(basestring)
+            a list of sentences
+        """
+        if isinstance(textdata, OJDocument):
+            textdata = textdata.plain_text
+
+        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
         return sentences
 
     def check_abbrev(self, sentences):
