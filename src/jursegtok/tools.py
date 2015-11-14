@@ -21,7 +21,6 @@ from segtok import segmenter
 
 # define constants
 HTML_PARSER = etree.HTMLParser()
-OJCORPUS_DIR = '/home/kuhn/Data/ojc_joint_set'
 COUNT_TOKENIZER = CountVectorizer().build_tokenizer()
 JUR_SEGMENTER = hickle.load(get_data('jursentok.hkl'), safe=False)
 
@@ -95,47 +94,8 @@ def random_sampling(corpuspath, outputpath, k=10):
     """
     samples = random.sample(os.listdir(corpuspath), k)
     for filename in samples:
-
         shutil.copy(os.path.join(os.path.abspath(corpuspath),
                                  filename), outputpath)
-
-
-def extract_layout(htmldecision, outfile):
-    """
-    parses the overall structure of a decision
-    :param htmldecision:
-    :param outfile:
-    :return:
-    """
-    raise NotImplementedError
-
-
-def structure_markdown(mdowndecisionfile, outputpath, keywordlist=HEADERS):
-    """
-    structures the markdown elements
-    :param corpuspath:
-    :param outputpath:
-    :return:
-    """
-    decisionfile = markdown.markdownFromFile()
-    prep = markdown.build_preprocessors(decisionfile)
-
-
-def convert2markdown(corpuspath, outputpath):
-    """
-    converts raw html files of a corpus to markdown
-    :param corpuspath:
-    :param outputpath:
-    :return:
-    """
-    corpus = OJCorpusMarkdown(corpuspath)
-    output = os.path.abspath(outputpath)
-
-    for name, document in corpus:
-        outfilepath = os.path.join(output, name.rstrip('.html') + '.md')
-        with codecs.open(outfilepath, encoding='utf-8', mode='w') as mdown:
-            mdown.write(document)
-        mdown.close()
 
 
 def convert2sentences(corpuspath, outputpath):
@@ -168,14 +128,6 @@ def sentencelist2string(sentencelist):
 
     sentences = '\n'.join(sentencelist)
     return sentences
-
-
-def open_remote_corpus():
-    """
-    opens the remote corpus resource via ssh
-    :return:
-    """
-    raise NotImplementedError
 
 
 def count_tokens(corpuspath):
