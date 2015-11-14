@@ -29,6 +29,7 @@ JUR_SEGMENTER = hickle.load(get_data('jursentok.hkl'), safe=False)
 HEADERS = [u'## Tenor', u'## Tatbestand', u'## Grunde',
            u'## Gründe', u'## Entscheidungsgründe', u'Entscheidungs']
 
+
 class OJCorpus(object):
     """
     This class represents a corpus of gzipped openjur.de court decision
@@ -61,6 +62,14 @@ class OJDocument(object):
     def __init__(self, document_path):
         self.document_path = document_path
 
+    def _get_html_tree(self):
+        """returns an LXML etree representation of the input HTML file"""
+        try:
+            tree = etree.parse(self.document_path, parser=HTML_PARSER)
+        except AssertionError:
+            logging.error('Assertion Error. No Root: ' + self.document_path)
+        return tree
+
     @property
     def filename(self):
         return os.path.basename(self.document_path)
@@ -72,15 +81,17 @@ class OJDocument(object):
 
     @property
     def plain_text(self):
-        try:
-            tree = etree.parse(self.document_path, parser=HTML_PARSER)
-        except AssertionError:
-            logging.error('Assertion Error. No Root: ' + self.document_path)
+        tree = self._get_html_tree()
         return u' '.join(tree.xpath('//article//text()'))
 
     @property
     def sentences(self):
-        raise NotImplementedError
+        """
+        returns a list of sentences. Sentence segmentation is done using a
+        retrained nltk sentence tokenizer.
+        """
+        tree = self._get_html_tree()
+        return jursegment_sent_generator(tree.xpath('//article//text()'))
 
     @property
     def tokens(self):
