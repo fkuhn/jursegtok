@@ -3,22 +3,21 @@
 
 __author__ = 'kuhn'
 import codecs
+import gzip
 import logging
 import os
 import random
 import shutil
 
-import html2text
-from jursegtok import tokenizer
 from lxml import etree
 from sklearn.feature_extraction.text import CountVectorizer
-
 import hickle
-import markdown
-import utils
+
+from jursegtok import tokenizer
+from jursegtok.utils import get_data, find_files
 from segtok import tokenizer as segtoktokenizer
-# from segtok.segmenter import split_single, split_multi
 from segtok import segmenter
+
 
 # define constants
 HTML_PARSER = etree.HTMLParser()
