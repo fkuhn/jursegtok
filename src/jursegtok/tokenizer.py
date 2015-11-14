@@ -15,13 +15,12 @@ from segtok import segmenter, segmenter_test, tokenizer
 
 
 class JurSentTokenizer(object):
-
     def __init__(self):
 
-        self.jur_abbreviations = get_abbreviations()
+        self.jur_abbreviations = self.get_abbreviations()
 
-        self.sent_tokenizer= get_tokenizer_model()
-        self.sent_tokenizer_alt = get_tokenizer_model('jursentok_1500.hkl')
+        self.sent_tokenizer= self.get_tokenizer_model()
+        self.sent_tokenizer_alt = self.get_tokenizer_model('jursentok1500.hkl')
 
         # must remove ending abbreviation stops to feed as parameters.
         # inline abbreviation stops are kept
@@ -29,7 +28,7 @@ class JurSentTokenizer(object):
         # self.sent_tokenizer._params.abbrev_types.update(set(self.jur_abbreviations))
         self.sent_tokenizer._params.abbrev_types.update(set(self.jur_abbreviations))
 
-    def get_abbreviations(abbreviations='legal_abbrv.txt'):
+    def get_abbreviations(self, abbreviations='legal_abbrv.txt'):
         """
         Reads and prepares abbreviations from a text file found in data.
         param: abbreviations: file
@@ -39,25 +38,27 @@ class JurSentTokenizer(object):
         return set(unicode(abbrev.strip().rstrip('.'))
                    for abbrev in abbrev_file)
 
-    def get_tokenizer_model(model='jursentok.hkl'):
+    def get_tokenizer_model(self, model='jursentok.hkl'):
         """
         Reads and prepares a pretrained tokenizer model hickle-serialized data.
         param: model: file
         return: tokenizer_object: tokenizer object
         """
-        tokenizer_object = hickle.load(utils.get_data(model)), safe = False)
+        tokenizer_object = hickle.load(get_data(model), safe = False)
         return tokenizer_object
 
 
-    def sentence_tokenize(self, textdata):
-        """
-        Takes a document string and returns a list of sentence segments.
-        param: texdata: string
-        return: sentences: list
-        """
-        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
+    def sentence_tokenize(self, data):
 
-        return sentences
+        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(data))
+        sentences_alt = self.check_abbrev(self.sent_tokenizer_alt.tokenize(data))
+        if len(sentences) > len(sentences_alt):
+            return sentences_alt
+        elif len(sentences) > len(sentences_alt):
+            return sentences
+        else:
+            return sentences
+
 
     def check_abbrev(self, sentences):
         """
@@ -80,7 +81,8 @@ class JurSentTokenizer(object):
                 return sentences
             else:
                 return sentences
-	def add_abbreviations(abbreviations):
+
+    def add_abbreviations(self, abbreviations):
         """
         From a given list, add abbreviations to the tokenizer.
         Needs a list of abbreviations.
