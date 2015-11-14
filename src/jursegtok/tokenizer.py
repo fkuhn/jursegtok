@@ -21,7 +21,7 @@ class JurSentTokenizer(object):
         self.jur_abbreviations = get_abbreviations()
 
         self.sent_tokenizer= get_tokenizer_model()
-        self.sent_tokenizer_alt = get_tokenizer_model('jursentOK_1500.hkl')
+        self.sent_tokenizer_alt = get_tokenizer_model('jursentok_1500.hkl')
 
         # must remove ending abbreviation stops to feed as parameters.
         # inline abbreviation stops are kept
@@ -50,17 +50,15 @@ class JurSentTokenizer(object):
         return tokenizer_object
 
 
-    def sentence_tokenize(self, data):
+    def sentence_tokenize(self, textdata):
+        """
+        Takes a document string and returns a list of sentence segments.
+        param: texdata: string
+        return: sentences: list
+        """
+        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
 
-        sentences = self.check_abbrev(self.sent_tokenizer.tokenize(data))
-        sentences_alt = self.check_abbrev(self.sent_tokenizer_alt.tokenize(data))
-        if len(sentences) > len(sentences_alt):
-            return sentences_alt
-        elif len(sentences) > len(sentences_alt):
-            return sentences
-        else:
-            return sentences
-
+        return sentences
 
     def check_abbrev(self, sentences):
         """
