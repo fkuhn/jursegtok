@@ -68,7 +68,6 @@ def structure_markdown(mdowndecisionfile, outputpath, keywordlist=HEADERS):
     :param outputpath:
     :return:
     """
-
     decisionfile = markdown.markdownFromFile()
     prep = markdown.build_preprocessors(decisionfile)
 
@@ -84,9 +83,8 @@ def convert2markdown(corpuspath, outputpath):
     output = os.path.abspath(outputpath)
 
     for name, document in corpus:
-
-        with codecs.open(os.path.join(output, name.rstrip('.html') + '.md'), encoding='utf-8', mode='w') as mdown:
-
+        outfilepath = os.path.join(output, name.rstrip('.html') + '.md')
+        with codecs.open(outfilepath, encoding='utf-8', mode='w') as mdown:
             mdown.write(document)
         mdown.close()
 
@@ -102,11 +100,10 @@ def convert2sentences(corpuspath, outputpath):
     output = os.path.abspath(outputpath)
     jst = tokenizer.JurSentTokenizer()
     for name, document in corpus:
-
-        with codecs.open(os.path.join(output, name.rstrip('.html') + '_sentences.txt'), encoding='utf-8', mode='w') as sentencetokenized:
+        outfilepath = os.path.join(output, name.rstrip('.html') + '_sentences.txt')
+        with codecs.open(outfilepath, encoding='utf-8', mode='w') as sentencetokenized:
             tokenized = sentencelist2string(jst.sentence_tokenize(document))
             sentencetokenized.write(tokenized)
-        sentencetokenized.close()
 
 
 def sentencelist2string(sentencelist):
@@ -121,7 +118,6 @@ def sentencelist2string(sentencelist):
             element = element + '\n'
 
     sentences = '\n'.join(sentencelist)
-
     return sentences
 
 
