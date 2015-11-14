@@ -35,7 +35,7 @@ def create_dir(path):
         else:
             raise
 
-def get_data(dataitem):
+
 def find_files(directory, pattern='*'):
     """
     find files recursively, e.g. all *.txt files
@@ -52,7 +52,11 @@ def find_files(directory, pattern='*'):
             if fnmatch.fnmatch(basename, pattern):
                 filename = os.path.join(root, basename)
                 yield filename
+
+
+def get_data(dataitem, rootdir_path=_ROOT):
     """
-    given a _ROOT, returns the absolute path of a given data item
+    given the path to the root installation path of the jursegtok,
+    returns the absolute path of a given data item.
     """
-    return os.path.join(_ROOT, 'data', dataitem)
+    return os.path.join(rootdir_path, 'data', dataitem)
