@@ -82,6 +82,15 @@ class OJDocument(object):
     def sentences(self):
         raise NotImplementedError
 
+    @property
+    def tokens(self):
+        """
+        Returns a list of tokens created by running the plain text of the
+        document through ``segtok``'s ``word_tokenizer``.
+
+        NOTE: This tokenizer does not consider sentence boundaries at all.
+        """
+        return segtoktokenizer.word_tokenizer(self.plain_text)
 
 
 def random_sampling(corpuspath, outputpath, k=10):
