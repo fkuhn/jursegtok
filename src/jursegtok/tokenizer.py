@@ -104,20 +104,26 @@ class JurSentTokenizer(object):
         """
         self.jur_abbreviations.add(unicode(abbreviations))
 
-    def train_tokenizer(self, trainsetpath):
+    def train_tokenizer(self, trainsetpath, setsize=1000):
         """
         (Re-)trains the tokenizer from a given OJCorpusPlain iterator.
-        params: path to training set: string
+        Parameters
+        ----------
+        trainsetpath : string - path to the training set
+        setsize : int - the number of docs used for training
         """
 
         trainset = OJCorpusPlain(trainsetpath)
         trainer = nltk.tokenize.punkt.PunktTrainer()
         trainer.INCLUDE_ALL_COLLOCS = True
         trainer.INCLUDE_ABBREV_COLLOCS = True
-
+        iteration = 0
         for fname, document in trainset_iterator:
+            if setsize == iteration:
+                break
             try:
                 trainer.train(document)
+                iteration += 1
             except:
                 continue
         trainer.finalize_training()
