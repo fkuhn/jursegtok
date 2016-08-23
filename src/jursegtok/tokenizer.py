@@ -7,7 +7,6 @@ import nltk
 
 import hickle
 
-from jursegtok.corpus import OJDocument
 from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
@@ -60,7 +59,7 @@ class JurSentTokenizer(object):
 
         Parameters
         ----------
-        textdata : basestring or OJDocument
+        textdata : basestring of
             the input document
 
         Returns
@@ -68,8 +67,7 @@ class JurSentTokenizer(object):
         sentences : list(basestring)
             a list of sentences
         """
-        if isinstance(textdata, OJDocument):
-            textdata = textdata.plain_text
+    
 
         sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
         return sentences
@@ -118,7 +116,7 @@ class JurSentTokenizer(object):
         trainer.INCLUDE_ALL_COLLOCS = True
         trainer.INCLUDE_ABBREV_COLLOCS = True
         iteration = 0
-        for fname, document in trainset_iterator:
+        for fname, document in trainset:
             if setsize == iteration:
                 break
             try:

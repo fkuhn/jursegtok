@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import os
+import gzip
 
 from lxml import etree
 from segtok import tokenizer as segtoktokenizer
 
 from jursegtok.utils import find_files
-
+from jursegtok.tokenizer import JurSentTokenizer
 
 HTML_PARSER = etree.HTMLParser()
-
 
 
 class OJCorpus(object):
@@ -53,30 +53,33 @@ class OJDocument(object):
             logging.error('Assertion Error. No Root: ' + self.document_path)
         return tree
 
-    @property
+    # @property
     def filename(self):
         return os.path.basename(self.document_path)
 
-    @property
+    # @property
     def raw_html(self):
         with gzip.open(self.document_path, 'r') as html_file:
             return html_file.read()
 
-    @property
+    # @property
     def plain_text(self):
         tree = self._get_html_tree()
         return u' '.join(tree.xpath('//article//text()'))
 
-    @property
+    # @property
     def sentences(self):
         """
         returns a list of sentences. Sentence segmentation is done using a
         retrained nltk sentence tokenizer.
         """
-        tree = self._get_html_tree()
-        return jursegment_sent_generator(tree.xpath('//article//text()'))
+        # tree = self._get_html_tree()
+        # apply the sentence tokenizer
+        jsent_tokenizer = JurSentTokenizer()
+        return jsent_tokenizer.sentence_tokenize(self.plain_text())
+        # return jursegment_sent_generator(tree.xpath('//article//text()'))
 
-    @property
+    # @property
     def tokens(self):
         """
         Returns a list of tokens created by running the plain text of the
