@@ -4,6 +4,7 @@
 import os
 import gzip
 
+
 from lxml import etree
 from segtok import tokenizer as segtoktokenizer
 
@@ -79,6 +80,16 @@ class OJDocument(object):
         return jsent_tokenizer.sentence_tokenize(self.plain_text())
         # return jursegment_sent_generator(tree.xpath('//article//text()'))
 
+    def sentences_spacy(self):
+        """
+        Alternative sentence tokenization with spaCy
+        """
+        sentences = list()
+        for sentence in NLP_DE(self.plain_text()).sents:
+            sentences.append(sentence)
+        return sentences
+
+
     # @property
     def tokens(self):
         """
@@ -88,4 +99,3 @@ class OJDocument(object):
         NOTE: This tokenizer does not consider sentence boundaries at all.
         """
         return segtoktokenizer.word_tokenizer(self.plain_text)
-

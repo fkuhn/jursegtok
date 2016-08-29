@@ -4,12 +4,14 @@ import codecs
 import os
 
 import nltk
-
+import spacy
 import hickle
+
 
 from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
+nlp_de = spacy.load('de')
 
 # COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
 
@@ -67,7 +69,7 @@ class JurSentTokenizer(object):
         sentences : list(basestring)
             a list of sentences
         """
-    
+
 
         sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
         return sentences
@@ -79,9 +81,15 @@ class JurSentTokenizer(object):
         :return:
         """
         for sentence in sentences:
+            # TODO: Still not working correctly. Abbreviations are not escaped.
+            # rewrite method. indexing is wrong
+            # simple tokenizing of the sentence.
+            tokens = nlp_de.tokenizer(sentence)
 
-            tokens = tokenizer.space_tokenizer(sentence)
-            if tokens[-2] in self.jur_abbreviations and tokens[-1] == u'.':
+            # try if index is valid
+            if len(tokens) <= 3:
+                continue
+            if tokens[-2] in self.jur_abbreviations and tokens[-1] == '.':
                 tokens[-2] = tokens[-2] + u'.'
                 tokens.remove(tokens[-1])
                 # get the next sentence
@@ -90,9 +98,8 @@ class JurSentTokenizer(object):
                 sentence_update = u' '.join(tokens)
                 sentences[sentences.index(sentence)] = sentence_update
                 sentences = sentences.remove(sentences[sentences.index(sentence) + 1])
-                return sentences
-            else:
-                return sentences
+
+        return sentences
 
     def add_abbreviations(self, abbreviations):
         """
