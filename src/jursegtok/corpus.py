@@ -3,6 +3,7 @@
 
 import os
 import gzip
+import logging
 
 
 from lxml import etree
@@ -19,9 +20,14 @@ class OJCorpus(object):
     This class represents a corpus of gzipped openjur.de court decision
     HTML files as an Iterable over ``OJDocument`` instances.
     """
-    def __init__(self, corpus_path):
+    def __init__(self, corpus_path, gz=True):
+        self.gz = gz
         self.corpus_path = os.path.abspath(corpus_path)
-        self.file_paths = find_files(corpus_path, '*.html.gz')
+
+        if self.gz:
+            self.file_paths = find_files(corpus_path, '*.html.gz')
+        else:
+            self.file_paths = find_files(corpus_path, '*.html')
 
     def regenerate_paths(self):
         """
@@ -29,7 +35,10 @@ class OJCorpus(object):
         the files once, you'll need to call this method to iterate over them
         again.
         """
-        self.file_paths = find_files(self.corpus_path, '*.html.gz')
+        if self.gz:
+            self.file_paths = find_files(self.corpus_path, '*.html.gz')
+        else:
+            self.file_paths = find_files(self.corpus_path, '*.html')
 
     def __iter__(self):
         return self
@@ -80,15 +89,14 @@ class OJDocument(object):
         return jsent_tokenizer.sentence_tokenize(self.plain_text())
         # return jursegment_sent_generator(tree.xpath('//article//text()'))
 
-    def sentences_spacy(self):
-        """
-        Alternative sentence tokenization with spaCy
-        """
-        sentences = list()
-        for sentence in NLP_DE(self.plain_text()).sents:
-            sentences.append(sentence)
-        return sentences
-
+    # def sentences_spacy(self):
+    #     """
+    #     Alternative sentence tokenization with spaCy
+    #     """
+    #     sentences = list()
+    #     for sentence in NLP_DE(self.plain_text()).sents:
+    #         sentences.append(sentence)
+    #     return sentences
 
     # @property
     def tokens(self):

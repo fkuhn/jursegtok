@@ -69,8 +69,6 @@ class JurSentTokenizer(object):
         sentences : list(basestring)
             a list of sentences
         """
-
-
         sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
         return sentences
 

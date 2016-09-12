@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-__author__ = 'kuhn'
 import codecs
 import gzip
 import logging
 import os
 import random
 import shutil
+
+from jursegtok import corpus
 
 from lxml import etree
 from sklearn.feature_extraction.text import CountVectorizer
@@ -48,6 +48,38 @@ def random_sampling(corpuspath, outputpath='/tmp', k=10, debug=False):
         shutil.copy(filepath, outputpath)
         if debug:
             print(os.path.basename(filepath))
+
+
+def random_sentenced_docs(corpuspath, outputpath='/tmp',
+                          k=10, debug=False, gz=True):
+    """
+    random sampling with already sentence segmented
+    documents.
+    :param corpuspath:
+    :param outputpath:
+    :param k: int - number of samples
+    :param debug:
+    :param gz: True when .html.gz reference
+    :return:
+    """
+
+    if gz:
+        files = list(find_files(corpuspath, '*.html.gz'))
+    else:
+        files = list(find_files(corpuspath, '*.html'))
+
+    samples = random.sample(files, k)
+
+    for filepath in samples:
+
+        fname = os.path.basename(filepath).split('.')[0]+'.txt'
+
+        doc = corpus.OJDocument(filepath)
+        sentences = doc.sentences()
+        with codecs.open(os.path.join(outputpath, fname), mode='w', encoding='utf8') as sent:
+            for sentence in sentences:
+                sentence = " ".join(sentence.split())
+                sent.write(sentence+'\n')
 
 
 def convert2sentences(corpuspath, outputpath):
@@ -117,7 +149,7 @@ def jursegment_sent_generator(document):
 
 
 def sklearn_toksent_generator(corpus_path):
-    ojcorpus = OJCorpus(corpus_path)
+    ojcorpus = corpus.OJCorpus(corpus_path)
     for fname, sentences in ojcorpus:
         for sentence in sentences:
             tokenized_sentence = COUNT_TOKENIZER(sentence)
