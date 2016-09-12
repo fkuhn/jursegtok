@@ -181,6 +181,8 @@ BerlinFG
 BErzGG
 BeschFG
 Beschl.
+Best.
+Bespr.
 BestbüAbfV
 BestüVAbfV
 BetrAVG
@@ -294,6 +296,7 @@ CCC
 CDU
 ChemG
 cic
+c.i.c.
 CISG
 CR
 CSU
