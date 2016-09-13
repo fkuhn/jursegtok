@@ -6,13 +6,13 @@ import logging
 import os
 import random
 import shutil
+import hickle
 
 from jursegtok import corpus
 
 from lxml import etree
 from sklearn.feature_extraction.text import CountVectorizer
-import hickle
-
+from nltk import tokenize
 from jursegtok.tokenizer import JurSentTokenizer
 from jursegtok.utils import get_data, find_files
 from segtok import tokenizer as segtoktokenizer
@@ -80,6 +80,27 @@ def random_sentenced_docs(corpuspath, outputpath='/tmp',
             for sentence in sentences:
                 sentence = " ".join(sentence.split())
                 sent.write(sentence+'\n')
+
+
+def build_hickle_word_sequences(corpuspath, output):
+    """
+    inefficient list based word sequence building
+    dumps a hickle object as file
+    :param corpuspath:
+    :param output: path and name of the outputfile
+    :return:
+    """
+    corp = corpus.OJCorpus(corpuspath, gz=False)
+    tkn = tokenize.WordPunctTokenizer()
+    outputf = codecs.open(output, encoding='utf8', mode='w')
+    for doc in corp:
+        # FIXME hickles cannot be used for multiple objects
+        # to one hickle file at the moment
+        # use h5py and its create_dataset function directly
+        # must encode to unicode to pass on to hickle
+        words = [word.encode('utf8') for word in (tkn.tokenize(doc.plain_text()))]
+
+        hickle.dump(words, outputf, mode='a')
 
 
 def convert2sentences(corpuspath, outputpath):
