@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 import os
 import gzip
 import logging
-
+import nltk
 
 from lxml import etree
 from segtok import tokenizer as segtoktokenizer
@@ -57,6 +56,7 @@ class OJDocument(object):
 
     def _get_html_tree(self):
         """returns an LXML etree representation of the input HTML file"""
+        tree = None
         try:
             tree = etree.parse(self.document_path, parser=HTML_PARSER)
         except AssertionError:
@@ -89,15 +89,6 @@ class OJDocument(object):
         return jsent_tokenizer.sentence_tokenize(self.plain_text())
         # return jursegment_sent_generator(tree.xpath('//article//text()'))
 
-    # def sentences_spacy(self):
-    #     """
-    #     Alternative sentence tokenization with spaCy
-    #     """
-    #     sentences = list()
-    #     for sentence in NLP_DE(self.plain_text()).sents:
-    #         sentences.append(sentence)
-    #     return sentences
-
     # @property
     def tokens(self):
         """
@@ -107,3 +98,29 @@ class OJDocument(object):
         NOTE: This tokenizer does not consider sentence boundaries at all.
         """
         return segtoktokenizer.word_tokenizer(self.plain_text)
+
+
+def train_tokenizer(self, trainsetpath, setsize=1000):
+    """
+    (Re-)trains the tokenizer from a given OJCorpusPlain iterator.
+     Parameters
+    ----------
+    trainsetpath : string - path to the training set
+    setsize : int - the number of docs used for training
+    """
+
+    trainset = OJCorpus(trainsetpath)
+    trainer = nltk.tokenize.punkt.PunktTrainer()
+    trainer.INCLUDE_ALL_COLLOCS = True
+    trainer.INCLUDE_ABBREV_COLLOCS = True
+    epoch = 0
+    for fname, document in trainset:
+        if setsize == epoch:
+            break
+        try:
+            trainer.train(document)
+            epoch += 1
+        except :
+            continue
+    trainer.finalize_training()
+    self.sent_tokenizer = trainer.get_params()
