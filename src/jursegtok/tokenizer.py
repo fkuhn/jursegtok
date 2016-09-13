@@ -116,7 +116,7 @@ class JurSentTokenizer(object):
         setsize : int - the number of docs used for training
         """
 
-        trainset = OJCorpusPlain(trainsetpath)
+        trainset = TrainSet(trainsetpath)
         trainer = nltk.tokenize.punkt.PunktTrainer()
         trainer.INCLUDE_ALL_COLLOCS = True
         trainer.INCLUDE_ABBREV_COLLOCS = True
@@ -131,3 +131,8 @@ class JurSentTokenizer(object):
                 continue
         trainer.finalize_training()
         self.sent_tokenizer = trainer.get_params()
+
+
+
+
+
