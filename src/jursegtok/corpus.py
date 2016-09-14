@@ -99,6 +99,14 @@ class OJDocument(object):
         """
         return segtoktokenizer.word_tokenizer(self.plain_text)
 
+    def whitespace_tokenized(self):
+        """
+        returns a whitespace tokenized token list of the document.
+        :return:
+        """
+        wstkn = nltk.tokenize.WhitespaceTokenizer()
+        return wstkn.tokenize(self.plain_text())
+
 
 def train_tokenizer(self, trainsetpath, setsize=1000):
     """
