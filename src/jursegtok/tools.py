@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 import codecs
 import gzip
+import glob
 import logging
 import os
 import random
 import shutil
 import hickle
-
+import numpy
+import operator
 from jursegtok import corpus
 
 from lxml import etree
@@ -28,6 +30,57 @@ JUR_SEGMENTER = hickle.load(get_data('jursentok.hkl'), safe=False)
 # HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
 HEADERS = [u'## Tenor', u'## Tatbestand', u'## Grunde',
            u'## Gründe', u'## Entscheidungsgründe', u'Entscheidungs']
+
+
+def token_period_freqlist(corp, periods='.', wordnr=1000, minbifrq=1,
+                         mintrifrq=1, ranksize=100 ):
+    """
+    Uses a simple whitespace tokenizer, looks for all
+    tokens that end with a period and returns a
+    dictionary of them and all counts.
+    :param corpuspath:
+    :param wordnr:
+    :param minbifrq:
+    :param mintrifrq:
+    :param ranksize:
+    :return:
+    """
+    tokenperiods = dict()
+    for doc in corp:
+        tokenlist = doc.whitespace_tokenized()
+        for token in tokenlist:
+            if token[-1] in periods and not tokenperiods.get(token):
+                tokenperiods.update({token: 1})
+            elif token[-1] in periods and tokenperiods.get(token):
+                tpcount = tokenperiods.get(token)
+                tokenperiods.update({token: tpcount+1})
+    tokenperiods_sorted = sorted(tokenperiods.items(),
+                                 key=operator.itemgetter(1))
+    return tokenperiods_sorted
+
+
+def find_tokenpunct(doc):
+    """
+    whitespace tokenizes a document
+    and returns a frequency dict of all
+
+    :param doc:
+    :return:
+    """
+
+
+def punctpref_freq(corpus, output, k=100):
+    """
+    frequency list of all (Token,'.') tuples.
+    :param corpus: OJCorpus: OJCorpus object
+    :param output: str: filename of output file
+    :param k: int: range of frequency list
+    :return:
+    """
+    ws_tkn = tokenize.WhitespaceTokenizer()
+    freqs = numpy.array()
+    for doc in corpus:
+        pass
 
 
 
@@ -82,6 +135,7 @@ def random_sentenced_docs(corpuspath, outputpath='/tmp',
                 sent.write(sentence+'\n')
 
 
+
 def build_hickle_word_sequences(corpuspath, output):
     """
     inefficient list based word sequence building
@@ -110,7 +164,7 @@ def convert2sentences(corpuspath, outputpath):
     :param outputpath:
     :return:
     """
-    corpus = OJCorpusPlain(corpuspath)
+    corpus = corpus.OJCorpus(corpuspath)
     output = os.path.abspath(outputpath)
     jst = JurSentTokenizer()
     for name, document in corpus:
