@@ -7,6 +7,7 @@ import errno
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
+
 def create_dir(path):
     """
     Creates a directory. Warns, if the directory can't be accessed. Passes,
