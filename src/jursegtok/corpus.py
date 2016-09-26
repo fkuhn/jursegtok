@@ -54,6 +54,13 @@ class OJDocument(object):
     def __init__(self, document_path):
         self.document_path = document_path
 
+    def read_meta_json(self):
+        """
+        Returns a json string containing the meta information
+        of the document.
+        :return:
+        """
+
     def _get_html_tree(self):
         """returns an LXML etree representation of the input HTML file"""
         tree = None
@@ -132,3 +139,34 @@ def train_tokenizer(self, trainsetpath, setsize=1000):
             continue
     trainer.finalize_training()
     self.sent_tokenizer = trainer.get_params()
+
+class TrainCorpus(object):
+    """
+    This class represents a corpus of gzipped openjur.de court decision
+    HTML files as an Iterable over ``OJDocument`` instances.
+    """
+    def __init__(self, corpus_path, gz=True):
+        self.gz = gz
+        self.corpus_path = os.path.abspath(corpus_path)
+
+        if self.gz:
+            self.file_paths = find_files(corpus_path, '*.html.gz')
+        else:
+            self.file_paths = find_files(corpus_path, '*.html')
+
+    def regenerate_paths(self):
+        """
+        ``self.file_paths`` is a generator. If you have iterated over all
+        the files once, you'll need to call this method to iterate over them
+        again.
+        """
+        if self.gz:
+            self.file_paths = find_files(self.corpus_path, '*.html.gz')
+        else:
+            self.file_paths = find_files(self.corpus_path, '*.html')
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return OJDocument(self.file_paths.next())
