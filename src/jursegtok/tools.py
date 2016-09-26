@@ -233,7 +233,7 @@ def sklearn_toksent_generator(corpus_path):
 
 
 def sklearn_tokjursent_generator(corpus_path):
-    ojcorpus = OJCorpusJurSentTok(corpus_path)
+    ojcorpus = OJorpusJurSentTok(corpus_path)
     for fname, sentences in ojcorpus:
         for sentence in sentences:
             tokenized_sentence = COUNT_TOKENIZER(sentence)

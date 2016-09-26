@@ -6,6 +6,7 @@ import os
 import nltk
 import spacy
 import hickle
+import corpus
 
 
 from jursegtok.utils import get_data
@@ -116,7 +117,7 @@ class JurSentTokenizer(object):
         setsize : int - the number of docs used for training
         """
 
-        trainset = TrainSet(trainsetpath)
+        trainset = corpus.TrainCorpus(trainsetpath)
         trainer = nltk.tokenize.punkt.PunktTrainer()
         trainer.INCLUDE_ALL_COLLOCS = True
         trainer.INCLUDE_ABBREV_COLLOCS = True
@@ -131,8 +132,3 @@ class JurSentTokenizer(object):
                 continue
         trainer.finalize_training()
         self.sent_tokenizer = trainer.get_params()
-
-
-
-
-
