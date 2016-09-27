@@ -4,7 +4,7 @@ import codecs
 import os
 
 import nltk
-import spacy
+# import spacy
 import hickle
 import corpus
 
@@ -12,7 +12,7 @@ import corpus
 from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
-nlp_de = spacy.load('de')
+# nlp_de = spacy.load('de')
 
 # COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
 
@@ -83,7 +83,8 @@ class JurSentTokenizer(object):
             # TODO: Still not working correctly. Abbreviations are not escaped.
             # rewrite method. indexing is wrong
             # simple tokenizing of the sentence.
-            tokens = nlp_de.tokenizer(sentence)
+            ws_tk = nltk.tokenize.WhitespaceTokenizer()
+            tokens = ws_tk.tokenize(sentence)
 
             # try if index is valid
             if len(tokens) <= 3:
