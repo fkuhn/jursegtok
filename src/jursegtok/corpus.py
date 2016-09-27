@@ -53,6 +53,19 @@ class OJDocument(object):
     """
     def __init__(self, document_path):
         self.document_path = document_path
+        tree = self._get_html_tree()
+
+        info_tree = tree.xpath("//div[contains(@id, 'info')]")[0]
+
+        self.file_name = os.path.basename(self.document_path)
+        self.court = info_tree.xpath("/ul[0]/li[0]/p/a")[0].text
+        self.date = info_tree.xpath("/ul[0]/li[1]/p")[0].text
+        self.file_id = info_tree.xpath("/ul[0]/li[2]/p")[0].text
+        self.verdict_type = info_tree.xpath("/ul[0]/li[3]/p")[0].text  # typ
+        self.source = info_tree.xpath("/ul[1]/li[0]/p")[0].text  # fundstelle
+        self.process = info_tree.xpath("/ul[1]/li[1]/p")[0].text  # verfahrensgang
+        self.field_of_law = info_tree.xpath("p[contains(@class='related')]/span")
+
 
     def read_meta_json(self):
         """
@@ -60,6 +73,7 @@ class OJDocument(object):
         of the document.
         :return:
         """
+
 
     def _get_html_tree(self):
         """returns an LXML etree representation of the input HTML file"""
