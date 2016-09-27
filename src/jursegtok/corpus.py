@@ -4,6 +4,7 @@ import os
 import gzip
 import logging
 import nltk
+import json
 
 from lxml import etree
 from segtok import tokenizer as segtoktokenizer
@@ -13,6 +14,12 @@ from jursegtok.tokenizer import JurSentTokenizer
 
 HTML_PARSER = etree.HTMLParser()
 
+class CorpusIndexer(object):
+    """
+    Indexing of a Corpus with elasticsearch.
+    See notebook for details.
+    """
+    pass
 
 class OJCorpus(object):
     """
@@ -58,22 +65,33 @@ class OJDocument(object):
         info_tree = tree.xpath("//div[contains(@id, 'info')]")[0]
 
         self.file_name = os.path.basename(self.document_path)
-        self.court = info_tree.xpath("/ul[0]/li[0]/p/a")[0].text
-        self.date = info_tree.xpath("/ul[0]/li[1]/p")[0].text
-        self.file_id = info_tree.xpath("/ul[0]/li[2]/p")[0].text
-        self.verdict_type = info_tree.xpath("/ul[0]/li[3]/p")[0].text  # typ
-        self.source = info_tree.xpath("/ul[1]/li[0]/p")[0].text  # fundstelle
-        self.process = info_tree.xpath("/ul[1]/li[1]/p")[0].text  # verfahrensgang
-        self.field_of_law = info_tree.xpath("p[contains(@class='related')]/span")
+        self.court = info_tree.xpath("//ul/li/p/a")[0].text
+        # self.date = info_tree.xpath("//ul/li/p")[0].text
+        self.date = info_tree.xpath("//ul/li/p")[1].text
+        self.file_id = info_tree.xpath("//ul/li/p")[2].text  # aktenzeichen
+        self.verdict_type = info_tree.xpath("//ul/li/p")[3].text  # typ
+        self.source = info_tree.xpath("//ul/li/p")[4].text  # fundstelle
+        self.process = info_tree.xpath("//ul/li/p")[5].text
+        field_of_law_root = info_tree.xpath("//span[contains(@class, 'rechtsgebiete')]/a")
+        self.field_of_law = u', '.join([fol.text for fol in field_of_law_root])
 
-
-    def read_meta_json(self):
+    def meta2json(self):
         """
         Returns a json string containing the meta information
         of the document.
         :return:
         """
-
+        metadict = dict()
+        metadict = {'filename': self.file_name,
+                    'date': self.date,
+                    'court': self.court,
+                    'file_id': self.file_id,
+                    'type': self.verdict_type,
+                    'source': self.source,
+                    'process': self.process,
+                    'fields_of_law': self.field_of_law,
+                    'document_path': self.document_path}
+        return json.dumps(metadict)
 
     def _get_html_tree(self):
         """returns an LXML etree representation of the input HTML file"""
