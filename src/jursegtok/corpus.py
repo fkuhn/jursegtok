@@ -14,12 +14,14 @@ from jursegtok.tokenizer import JurSentTokenizer
 
 HTML_PARSER = etree.HTMLParser()
 
+
 class CorpusIndexer(object):
     """
     Indexing of a Corpus with elasticsearch.
     See notebook for details.
     """
     pass
+
 
 class OJCorpus(object):
     """
@@ -86,8 +88,8 @@ class OJDocument(object):
                     'date': self.date,
                     'court': self.court,
                     'file_id': self.file_id,
-                    'type': self.verdict_type,
-                    'source': self.source,
+                    'decision_type': self.verdict_type,
+                    'decision_source': self.source,
                     'process': self.process,
                     'fields_of_law': self.field_of_law,
                     'document_path': self.document_path}
