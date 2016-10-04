@@ -1,5 +1,5 @@
 # Domain specific sentence tokenizing for German legal decisions
-
+[![Build Status](https://travis-ci.org/fkuhn/jursegtok.svg?branch=master)](https://travis-ci.org/fkuhn/jursegtok)
 this is a modification of the nltk sentence tokenizer to overcome the 
 sentence segmentation problems by the vast amount of abbreviations
 found in german law texts.
