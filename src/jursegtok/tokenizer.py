@@ -5,7 +5,7 @@ import os
 
 import nltk
 # import spacy
-import hickle
+# import hickle
 import corpus
 
 
