@@ -10,7 +10,7 @@ from lxml import etree
 from segtok import tokenizer as segtoktokenizer
 
 from jursegtok.utils import find_files
-from jursegtok.tokenizer import JurSentTokenizer
+# from jursegtok.tokenizer import JurSentTokenizer
 
 HTML_PARSER = etree.HTMLParser()
 
@@ -28,6 +28,7 @@ class OJCorpus(object):
     This class represents a corpus of gzipped openjur.de court decision
     HTML files as an Iterable over ``OJDocument`` instances.
     """
+
     def __init__(self, corpus_path, gz=True):
         self.gz = gz
         self.corpus_path = os.path.abspath(corpus_path)
@@ -60,6 +61,7 @@ class OJDocument(object):
     This class represents a document from the openjur.de corpus of court
     decisions in various formats.
     """
+
     def __init__(self, document_path):
         self.document_path = document_path
         tree = self._get_html_tree()
@@ -67,6 +69,8 @@ class OJDocument(object):
         info_tree = tree.xpath("//div[contains(@id, 'info')]")[0]
 
         self.file_name = os.path.basename(self.document_path)
+        self.creation_date = os.path.getctime(self.document_path)
+        self.file_size = os.path.getsize(self.document_path)
         self.court = info_tree.xpath("//ul/li/p/a")[0].text
         # self.date = info_tree.xpath("//ul/li/p")[0].text
         self.date = info_tree.xpath("//ul/li/p")[1].text
@@ -77,22 +81,28 @@ class OJDocument(object):
         field_of_law_root = info_tree.xpath("//span[contains(@class, 'rechtsgebiete')]/a")
         self.field_of_law = u', '.join([fol.text for fol in field_of_law_root])
 
-    def meta2json(self):
+        self.url = u'https://openjur.de/u/{}'.format(self.file_name)
+
+    def meta2json(self, document_string=False):
         """
         Returns a json string containing the meta information
         of the document.
         :return:
         """
-        metadict = dict()
         metadict = {'filename': self.file_name,
-                    'date': self.date,
+                    'filesize': self.file_size,
+                    'file_creation_date': self.creation_date,
+                    'decision_date': self.date,
                     'court': self.court,
                     'file_id': self.file_id,
                     'decision_type': self.verdict_type,
                     'decision_source': self.source,
                     'process': self.process,
                     'fields_of_law': self.field_of_law,
-                    'document_path': self.document_path}
+                    'document_path': self.document_path,
+                    'url': self.url}
+        if document_string:
+            metadict.update({'document_string': ' '.join(segtoktokenizer.word_tokenizer(self.plain_text()))})
         return json.dumps(metadict)
 
     def _get_html_tree(self):
@@ -118,35 +128,54 @@ class OJDocument(object):
         tree = self._get_html_tree()
         return u' '.join(tree.xpath('//article//text()'))
 
-    # @property
-    def sentences(self):
+    def paragraphs(self):
         """
-        returns a list of sentences. Sentence segmentation is done using a
-        retrained nltk sentence tokenizer.
-        """
-        # tree = self._get_html_tree()
-        # apply the sentence tokenizer
-        jsent_tokenizer = JurSentTokenizer()
-        return jsent_tokenizer.sentence_tokenize(self.plain_text())
-        # return jursegment_sent_generator(tree.xpath('//article//text()'))
+        returns a list of paragraphs from the documents
+        Returns
+        -------
 
-    # @property
-    def tokens(self):
         """
-        Returns a list of tokens created by running the plain text of the
-        document through ``segtok``'s ``word_tokenizer``.
+        tree = self._get_html_tree()
+        paragraphs = list()
+        counter = 1
+        for para in tree.xpath('//p'):
+            t = (para, counter, self.file_id)
+            paragraphs.append(t)
+            counter += 1
 
-        NOTE: This tokenizer does not consider sentence boundaries at all.
-        """
-        return segtoktokenizer.word_tokenizer(self.plain_text)
+        return paragraphs
 
-    def whitespace_tokenized(self):
-        """
-        returns a whitespace tokenized token list of the document.
-        :return:
-        """
-        wstkn = nltk.tokenize.WhitespaceTokenizer()
-        return wstkn.tokenize(self.plain_text())
+    # def sentences(self):
+    #     """
+    #     returns a list of sentences. Sentence segmentation is done using a
+    #     retrained nltk sentence tokenizer.
+    #     """
+    #     tree = self._get_html_tree()
+    #     # apply the sentence tokenizer
+    #
+    #     jsent_tokenizer = JurSentTokenizer()
+    #
+    #     return jsent_tokenizer.sentence_tokenize(self.plain_text())
+
+
+# @property
+def tokens(self):
+    """
+    Returns a list of tokens created by running the plain text of the
+    document through ``segtok``'s ``word_tokenizer``.
+
+    NOTE: This tokenizer does not consider sentence boundaries at all.
+    """
+    return segtoktokenizer.word_tokenizer(self.plain_text)
+
+
+def whitespace_tokenized(self):
+    """
+    returns a whitespace tokenized token list of the document.
+    :return:
+    """
+    wstkn = nltk.tokenize.WhitespaceTokenizer()
+    return wstkn.tokenize(self.plain_text())
 
 
 def train_tokenizer(self, trainsetpath, setsize=1000):
@@ -169,16 +198,18 @@ def train_tokenizer(self, trainsetpath, setsize=1000):
         try:
             trainer.train(document)
             epoch += 1
-        except :
+        except:
             continue
     trainer.finalize_training()
     self.sent_tokenizer = trainer.get_params()
+
 
 class TrainCorpus(object):
     """
     This class represents a corpus of gzipped openjur.de court decision
     HTML files as an Iterable over ``OJDocument`` instances.
     """
+
     def __init__(self, corpus_path, gz=True):
         self.gz = gz
         self.corpus_path = os.path.abspath(corpus_path)
