@@ -1,5 +1,3 @@
-__author__ = 'kuhn'
-
 import nltk
 import codecs
 import os
@@ -21,8 +19,7 @@ class JurSentTokenizer(object):
         self.common_abbreviations = codecs.open(os.path.abspath(COMMON), encoding='utf-8').re
         self.sent_tokenizer = hickle.load(os.path.abspath('data/jursentok.hkl'), safe=False)
         self.sent_tokenizer_alt = hickle.load(os.path.abspath('data/jursentok1500.hkl'), safe=False)
-
-        # must remove ending abbreviation stops to feed as parameters.
+           # must remove ending abbreviation stops to feed as parameters.
         # inline abbreviation stops are kept
         self.jur_abbreviations = [unicode(abbrev.rstrip('\n')) for abbrev in self.jur_abbreviations]
         self.common_abbreviations = [unicode(abbrev.rstrip('\n')) for abbrev in self.common_abbreviations]
