@@ -13,7 +13,7 @@ Abg.
 AbgG
 ABl
 ABl.EG
-Abs
+Abs.
 AbsichG
 AbwAG
 AbwHerkV
@@ -181,8 +181,6 @@ BerlinFG
 BErzGG
 BeschFG
 Beschl.
-Best.
-Bespr.
 BestbüAbfV
 BestüVAbfV
 BetrAVG
@@ -296,7 +294,6 @@ CCC
 CDU
 ChemG
 cic
-c.i.c.
 CISG
 CR
 CSU
@@ -480,6 +477,8 @@ GG
 ggb.
 ggü.
 GGBefG
+gg.
+ggf.
 GGV
 GGVS
 GKG
@@ -968,6 +967,7 @@ WVG
 WZG
 WährG
 z.A.
+z.B.
 ZaltorientbiblRg
 ZDG
 ZeitG
@@ -990,4 +990,3 @@ ZustVV
 ZV
 ZVG
 ZwVwV
-Abs.-Nr.
