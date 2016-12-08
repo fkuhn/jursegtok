@@ -29,6 +29,9 @@ setup(name='jursegtok',
     author_email='kuhn@ids-mannheim.de',
     url='www.ids-mannheim.de',
     license='Apache v2',
+    package_data={
+        'jursegtok': ['data/*']
+    },
     packages=find_packages('src'),
     package_dir = {'': 'src'}, include_package_data=True,
     zip_safe=False,
