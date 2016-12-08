@@ -5,7 +5,7 @@ import os
 
 import nltk
 # import spacy
-# import hickle
+import hickle
 import corpus
 
 
@@ -23,9 +23,9 @@ class JurSentTokenizer(object):
 
         self.jur_abbreviations = self.get_abbreviations()
 
-        self.sent_tokenizer = self.get_tokenizer_model()
-        self.sent_tokenizer_alt = self.get_tokenizer_model('jursentok1500.hkl')
-
+        self.sent_tokenizer = self.get_tokenizer_model('jursentok.hkl')
+        # self.sent_tokenizer_alt = self.get_tokenizer_model('jursentok1500.hkl')
+        # self.sent_tokenizer = nltk.tokenize.PunktSentenceTokenizer()
         # must remove ending abbreviation stops to feed as parameters.
         # inline abbreviation stops are kept
 
@@ -71,6 +71,7 @@ class JurSentTokenizer(object):
             a list of sentences
         """
         sentences = self.check_abbrev(self.sent_tokenizer.tokenize(textdata))
+        # sentences = self.sent_tokenizer.tokenize(textdata)
         return sentences
 
     def check_abbrev(self, sentences):
