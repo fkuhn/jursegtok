@@ -5,10 +5,12 @@ import gzip
 import logging
 import nltk
 import json
+import re
+
 
 from lxml import etree
 from segtok import tokenizer as segtoktokenizer
-
+from gensim.models.doc2vec import TaggedDocument
 from jursegtok.utils import find_files
 # from jursegtok.tokenizer import JurSentTokenizer
 
@@ -133,29 +135,25 @@ class OJDocument(object):
         returns a list of paragraphs from the documents
         Returns
         -------
-
         """
+
         tree = self._get_html_tree()
         paragraphs = list()
         counter = 1
         for para in tree.xpath('//p'):
-            t = (para, counter, self.file_id)
+            # exclude none values
+            if para.text is None:
+                continue
+            # exclude whitespace only values
+            elif re.match('(\s+)',para.text):
+                continue
+
+            t = (unicode(para.text), counter, self.file_id)
             paragraphs.append(t)
             counter += 1
 
         return paragraphs
 
-    # def sentences(self):
-    #     """
-    #     returns a list of sentences. Sentence segmentation is done using a
-    #     retrained nltk sentence tokenizer.
-    #     """
-    #     tree = self._get_html_tree()
-    #     # apply the sentence tokenizer
-    #
-    #     jsent_tokenizer = JurSentTokenizer()
-    #
-    #     return jsent_tokenizer.sentence_tokenize(self.plain_text())
 
 
 # @property

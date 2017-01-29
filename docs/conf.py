@@ -16,9 +16,9 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../src/'))
 
 from recommonmark.parser import CommonMarkParser
 
@@ -88,7 +88,7 @@ language = None
 #
 # Else, today_fmt is used as the format for a strftime call.
 #
-# today_fmt = '%B %d, %Y'
+today_fmt = '%B %d, %Y'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -102,12 +102,12 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 #
-# add_function_parentheses = True
+add_function_parentheses = True
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
 #
-# add_module_names = True
+add_module_names = True
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
@@ -146,7 +146,7 @@ html_theme = 'alabaster'
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = u'jursegtok v0.2'
+html_title = u'jursegtok v0.2'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -196,11 +196,11 @@ html_static_path = ['_static']
 
 # If false, no module index is generated.
 #
-# html_domain_indices = True
+html_domain_indices = True
 
 # If false, no index is generated.
 #
-# html_use_index = True
+html_use_index = True
 
 # If true, the index is split into individual pages for each letter.
 #

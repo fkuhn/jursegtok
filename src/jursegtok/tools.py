@@ -9,7 +9,7 @@ import random
 import shutil
 import hickle
 import numpy
-import operator
+
 from jursegtok import corpus
 
 from lxml import etree
@@ -19,12 +19,12 @@ from jursegtok.tokenizer import JurSentTokenizer
 from jursegtok.utils import get_data, find_files
 from segtok import tokenizer as segtoktokenizer
 from segtok import segmenter
-
+print ;
 
 # define constants
 HTML_PARSER = etree.HTMLParser()
 COUNT_TOKENIZER = CountVectorizer().build_tokenizer()
-JUR_SEGMENTER = hickle.load(get_data('jursentok.hkl'), safe=False)
+# JUR_SEGMENTER = hickle.load(get_data('jursentok.hkl'), safe=False)
 
 
 # HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
@@ -83,16 +83,14 @@ def punctpref_freq(corpus, output, k=100):
         pass
 
 
-
-
-
-
 def random_sampling(corpuspath, outputpath='/tmp', k=10, debug=False):
     """
     randomly selects k elements from a corpus and
     copies them to an output path
-    :param corpuspath:
-    :param number:
+    :param corpuspath: string: path with data to chose from
+    :param outputpath: string: path where samples are stored
+    :param k: integer: number of documents retrieved
+    :param debug: boolean: print filepaths
     :return:
     """
     files = list(find_files(corpuspath, '*.html.gz'))
@@ -133,6 +131,36 @@ def random_sentenced_docs(corpuspath, outputpath='/tmp',
             for sentence in sentences:
                 sentence = " ".join(sentence.split())
                 sent.write(sentence+'\n')
+
+
+def get_mean_filesize(corpuspath):
+    """
+    computes the mean filesize of all files given in a directory
+    Parameters
+    ----------
+    corpuspath
+
+    Returns float
+    -------
+    """
+    filesizes = numpy.array([os.path.getsize(os.path.join(corpuspath, fn)) for fn in os.listdir(corpuspath)])
+
+    return filesizes.mean()
+
+
+def get_filesizes(corpuspath):
+    """
+    computes the mean filesize of all files given in a directory
+    Parameters
+    ----------
+    corpuspath
+
+    Returns numpy array
+    -------
+    """
+    filesizes = numpy.array([os.path.getsize(os.path.join(corpuspath, fn)) for fn in os.listdir(corpuspath)])
+
+    return filesizes
 
 
 
@@ -239,4 +267,3 @@ def sklearn_tokjursent_generator(corpus_path):
             tokenized_sentence = COUNT_TOKENIZER(sentence)
             if len(tokenized_sentence) > 1:
                 yield tokenized_sentence
-
