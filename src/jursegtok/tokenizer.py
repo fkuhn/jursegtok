@@ -17,6 +17,16 @@ from segtok import segmenter, segmenter_test, tokenizer
 # COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
 
 
+class Abbreviations(object):
+
+    def __init__(self, filepath):
+
+        self.filepath = filepath
+        with codecs.open(self.filepath, mode='r', encoding='utf-8'):
+
+
+
+
 class JurSentTokenizer(object):
 
     def __init__(self):
