@@ -133,7 +133,10 @@ class OJDocument(object):
     def paragraphs(self):
         """
         returns a list of paragraphs from the documents
-        Returns
+        A paragraph element is a tuple containing the following:
+        (Content-String, Index, official decision iedentifier)
+
+        Returns list
         -------
         """
 
