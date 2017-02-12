@@ -20,9 +20,22 @@ from segtok import segmenter, segmenter_test, tokenizer
 class Abbreviations(object):
 
     def __init__(self, filepath):
-
+        """
+        parses a text file with abbreviations.
+        Follows the schema
+        abbreviation > paraphrase
+        Parameters
+        ----------
+        filepath
+        """
         self.filepath = filepath
-        with codecs.open(self.filepath, mode='r', encoding='utf-8'):
+        self.tuples = list
+        self.abbreviations_list =list
+        with codecs.open(self.filepath, mode='r', encoding='utf-8') as abbreviations:
+            for line in abbreviations:
+                self.tupels.append(tuple(i.rstrip(' ').lstrip(' ') for i in str.split(line,'>')))
+            for item in self.tupels:
+                self.abbreviations_list.append(item[0])
 
 
 
