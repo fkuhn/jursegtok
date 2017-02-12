@@ -28,13 +28,13 @@ class Abbreviations(object):
         ----------
         filepath
         """
-        self.filepath = filepath
+        self._filepath = filepath
         self.tuples = list
         self.abbreviations_list =list
-        with codecs.open(self.filepath, mode='r', encoding='utf-8') as abbreviations:
+        with codecs.open(self._filepath, mode='r', encoding='utf-8') as abbreviations:
             for line in abbreviations:
-                self.tupels.append(tuple(i.rstrip(' ').lstrip(' ') for i in str.split(line,'>')))
-            for item in self.tupels:
+                self.tuples.append(tuple(i.rstrip(' ').lstrip(' ') for i in str.split(line,'>')))
+            for item in self.tuples:
                 self.abbreviations_list.append(item[0])
 
 
