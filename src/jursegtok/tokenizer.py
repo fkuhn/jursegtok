@@ -1,17 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import codecs
 import os
 
 import nltk
 # import spacy
-import hickle
+# import hickle
 import corpus
 
 
 from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
+
+
+# spacy is deprecated 
 # nlp_de = spacy.load('de')
 
 # COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
@@ -20,7 +24,7 @@ from segtok import segmenter, segmenter_test, tokenizer
 class Abbreviations(object):
 
     def __init__(self, filepath):
-        """
+        """u
         parses a text file with abbreviations.
         Follows the schema
         abbreviation > paraphrase
@@ -29,29 +33,29 @@ class Abbreviations(object):
         filepath
         """
         self.filepath = filepath
-        self.tuples = list
-        self.abbreviations_list =list
+        self.abbreviation_dic = {}
+        self.abbreviations_list = []
         with codecs.open(self.filepath, mode='r', encoding='utf-8') as abbreviations:
-            for line in abbreviations:
-                self.tupels.append(tuple(i.rstrip(' ').lstrip(' ') for i in str.split(line,'>')))
-            for item in self.tupels:
-                self.abbreviations_list.append(item[0])
-
-
-
+            for line in abbreviations.readlines():
+                parts = str.split(str(line), '>')
+                self.abbreviation_dic.update({parts[0]: parts[1]})
+                # self.atuples.append(tuple(i.rstrip(' ').lstrip(' ') for i in str.split (line,'>')))
+            # for item in self.atuples:
+            #    self.abbreviations_list.append(item[0])
 
 class JurSentTokenizer(object):
 
-    def __init__(self):
+    def __init__(self, tokenizer='standard', abbrev='legal_abbrv.txt'):
 
-        self.jur_abbreviations = self.get_abbreviations()
-
-        self.sent_tokenizer = self.get_tokenizer_model('jursentok.hkl')
-        # self.sent_tokenizer_alt = self.get_tokenizer_model('jursentok1500.hkl')
-        # self.sent_tokenizer = nltk.tokenize.PunktSentenceTokenizer()
+        if tokenizer == 'standard': 
+            self.sent_tokenizer = nltk.tokenize.PunktSentenceTokenizer()
+        else: 
+            self.sent_tokenizer = self.get_tokenizer_model(get_data(tokenizer))
+            # self.sent_tokenizer = self.get_tokenizer_model('jursentok.hkl')
+        # self.sent_tokenizer_alt = self.get_tokenizer_model('jursentok1500.hkl')       
         # must remove ending abbreviation stops to feed as parameters.
         # inline abbreviation stops are kept
-
+        self.jur_abbreviations = self.get_abbreviations()
         # self.sent_tokenizer._params.abbrev_types.update(set(self.jur_abbreviations))
         self.sent_tokenizer._params.abbrev_types.update(set(self.jur_abbreviations))
 
@@ -61,7 +65,7 @@ class JurSentTokenizer(object):
         param: abbreviations: file
         return: abbreviations: set
         """
-        abbrev_file = codecs.open(get_data('legal_abbrv.txt'), encoding='utf8')
+        abbrev_file = codecs.open(get_data(abbreviations), encoding='utf8')
         return set(unicode(abbrev.strip().rstrip('.'))
                    for abbrev in abbrev_file)
 

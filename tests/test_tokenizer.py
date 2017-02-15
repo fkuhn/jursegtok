@@ -4,14 +4,14 @@ import types
 import nltk
 from jursegtok import tokenizer, corpus
 
-TESTDOC = corpus.OJDocument('896152.html')
+TESTDOC = corpus.OJDocument('testdata/896152.html')
 
 
 """
 This module contains tests for the jursegtok tokenizer
 """
 
-TESTFILE = '896152.html'
+TESTFILE = 'testdata/896152.html'
 
 
 class TestTokenizer(object):

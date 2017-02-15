@@ -2,18 +2,36 @@ from __future__ import unicode_literals
 import pytest
 import codecs
 from jursegtok import corpus
-# first a simple "test"
 
-testdoc = corpus.OJDocument('896152.html')
+FREQ_PARAGRAPHS = 12
+FREQ_TOKENS = 123
 
-
-paragraphs = testdoc.paragraphs()
-
-print len(paragraphs)
-
-with codecs.open("testurteil.txt", mode='w', encoding='utf-8') as outfile:
-    for para  in paragraphs:
-        outfile.write(unicode(para) + "\n")
-
+class TestCorpus(object):
+    """
+    tests if corpus methods work 
+    """
+    def setup(self):
+        testdoc = corpus.OJDocument('testdata/896152.html')
+        paragraphs = testdoc.paragraphs()
+        with codecs.open("testdata/testurteil.txt", mode='w', encoding='utf-8') as outfile:
+            for para  in paragraphs:
+                outfile.write(unicode(para) + "\n")
+        
+    def test_paragraphs(self):
+        """
+        checks if number of paragraphs equals assertion.
+        """
+        assert FREQ_PARAGRAPHS == len(paragraphs)
+ 
+    def test_whitespace_tokenizing(self):
+        pass
+   
+    def test_token_consistency(self):
+        """
+        tests if tokens 
+        """
+        pass
+            
+    
 
 

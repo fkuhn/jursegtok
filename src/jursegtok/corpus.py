@@ -10,7 +10,7 @@ import re
 
 from lxml import etree
 from segtok import tokenizer as segtoktokenizer
-from gensim.models.doc2vec import TaggedDocument
+# from gensim.models.doc2vec import TaggedDocument
 from jursegtok.utils import find_files
 # from jursegtok.tokenizer import JurSentTokenizer
 
@@ -156,8 +156,6 @@ class OJDocument(object):
             counter += 1
 
         return paragraphs
-
-
 
 # @property
 def tokens(self):
