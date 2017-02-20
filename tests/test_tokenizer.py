@@ -19,7 +19,7 @@ class TestTokenizer(object):
     initialize the tokenizer,
     sentence tokenize example docs and test the expected outcome.
     """
-
+	@staticmethod
     def setup(self):
 
         testdoc = corpus.OJDocument(TESTFILE)
@@ -30,7 +30,9 @@ class TestTokenizer(object):
         tok = tokenizer.JurSentTokenizer()
         assert type(tok.get_tokenizer_model(), nltk.tokenize.punkt.PunktSentenceTokenizer)
 
+	@staticmethod
     def test_abbreviations(self):
         pass
+    @staticmethod
     def test_tokenizing(self):
         pass
