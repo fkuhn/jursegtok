@@ -1,4 +1,3 @@
-__author__ = 'kuhn'
 from setuptools import setup, find_packages
 import sys, os
 

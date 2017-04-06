@@ -1,22 +1,17 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import codecs
 import os
 
 import nltk
-# import spacy
-# import hickle
+import hickle
 import corpus
 
+import utils
 
 from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
-
-
-# spacy is deprecated 
-# nlp_de = spacy.load('de')
 
 # COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
 
@@ -24,7 +19,7 @@ from segtok import segmenter, segmenter_test, tokenizer
 class Abbreviations(object):
 
     def __init__(self, filepath):
-        """u
+        """
         parses a text file with abbreviations.
         Follows the schema
         abbreviation > paraphrase
@@ -32,7 +27,7 @@ class Abbreviations(object):
         ----------
         filepath
         """
-<<<<<<< HEAD
+
         self.filepath = filepath
         self.abbreviation_dic = {}
         self.abbreviations_list = []
@@ -43,9 +38,9 @@ class Abbreviations(object):
                 # self.atuples.append(tuple(i.rstrip(' ').lstrip(' ') for i in str.split (line,'>')))
             # for item in self.atuples:
             #    self.abbreviations_list.append(item[0])
-=======
+
         self._filepath = filepath
-        self.tuples = list
+        self.tuples = list()
         self.abbreviations_list =list
         with codecs.open(self._filepath, mode='r', encoding='utf-8') as abbreviations:
             for line in abbreviations.readlines():
@@ -53,9 +48,6 @@ class Abbreviations(object):
             for item in self.tuples:
                 self.abbreviations_list.append(item[0])
 
-
-
->>>>>>> 8d1e0b13f21c8bd0065b6ecda09a47831e803c32
 
 class JurSentTokenizer(object):
 
@@ -175,3 +167,5 @@ class JurSentTokenizer(object):
                 continue
         trainer.finalize_training()
         self.sent_tokenizer = trainer.get_params()
+
+
