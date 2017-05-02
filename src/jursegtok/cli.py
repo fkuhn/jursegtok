@@ -1,18 +1,13 @@
 from __future__ import print_function, unicode_literals
 import os
 import codecs
-import sys
 import argparse
 import tokenizer
-
 
 PARSER = argparse.ArgumentParser()
 # PARSER.add_argument("--dir", const='' )
 PARSER.add_argument("intext")
 
-
-
-# PARSER.add_subparsers()
 
 def main():
     """
@@ -37,3 +32,4 @@ def process_file(tfile, tk):
         out = tk.sentence_tokenize(content)
 
     return out
+

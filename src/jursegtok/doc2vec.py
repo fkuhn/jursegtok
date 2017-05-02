@@ -16,10 +16,6 @@ from random import shuffle
 from sklearn.linear_model import LogisticRegression
 
 
-
-
-
-
 class LabeledLineSentence(object):
     def __init__(self, sources):
         self.sources = sources

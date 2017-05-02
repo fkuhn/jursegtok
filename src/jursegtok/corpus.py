@@ -148,7 +148,7 @@ class OJDocument(object):
             if para.text is None:
                 continue
             # exclude whitespace only values
-            elif re.match('(\s+)',para.text):
+            elif re.match('(\s+)', para.text):
                 continue
 
             t = (unicode(para.text), counter, self.file_id)
@@ -157,7 +157,7 @@ class OJDocument(object):
 
         return paragraphs
 
-# @property
+
 def tokens(self):
     """
     Returns a list of tokens created by running the plain text of the
