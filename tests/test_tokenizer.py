@@ -2,16 +2,19 @@ import os
 import pytest
 import types
 import nltk
+import codecs
 from jursegtok import tokenizer, corpus
+from jursegtok.utils import get_data
 
-TESTDOC = corpus.OJDocument('testdata/896152.html')
-
+# setup
+tok = tokenizer.JurSentTokenizer()
+testdoc = corpus.OJDocument('testdata/test_896152.html')
+test_plaintext = testdoc.plain_text()
+expected_text = codecs.open('testdata/test_expected.txt', mode='r', encoding='utf-8')
 
 """
 This module contains tests for the jursegtok tokenizer
 """
-
-TESTFILE = 'testdata/896152.html'
 
 
 class TestTokenizer(object):
@@ -19,20 +22,19 @@ class TestTokenizer(object):
     initialize the tokenizer,
     sentence tokenize example docs and test the expected outcome.
     """
-	@staticmethod
-    def setup(self):
 
-        testdoc = corpus.OJDocument(TESTFILE)
-        plain = testdoc.plain_text()
-        assert type(plain, types.StringType)
-        assert len(plain) > 0
+    def test_simple_tokenizing(self):
 
-        tok = tokenizer.JurSentTokenizer()
-        assert type(tok.get_tokenizer_model(), nltk.tokenize.punkt.PunktSentenceTokenizer)
+        sentence = "Das ist das Haus vom Nikolaus."
+        sentence_count = 1
 
-	@staticmethod
-    def test_abbreviations(self):
-        pass
-    @staticmethod
-    def test_tokenizing(self):
-        pass
+        assert(sentence_count == len(tok.sentence_tokenize(sentence)))
+
+    def test_document_tokenizing(self):
+
+        result_sentences = tok.sentence_tokenize(test_plaintext)
+
+        expected_sentences = expected_text.readlines()
+
+        assert(len(result_sentences) == len(expected_sentences))
+

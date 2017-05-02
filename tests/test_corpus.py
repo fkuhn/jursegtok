@@ -11,9 +11,9 @@ class TestCorpus(object):
     tests if corpus methods work 
     """
     def setup(self):
-        testdoc = corpus.OJDocument('testdata/896152.html')
+        testdoc = corpus.OJDocument('testdata/test_896152.html')
         paragraphs = testdoc.paragraphs()
-        with codecs.open("testdata/testurteil.txt", mode='w', encoding='utf-8') as outfile:
+        with codecs.open("testdata/test_expected.txt", mode='w', encoding='utf-8') as outfile:
             for para  in paragraphs:
                 outfile.write(unicode(para) + "\n")
         
