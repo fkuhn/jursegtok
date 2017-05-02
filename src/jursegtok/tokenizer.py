@@ -1,20 +1,17 @@
 #!/usr/bin/env python
 from __future__ import unicode_literals
 import codecs
-import os
 
 import nltk
 import hickle
 import corpus
 
-import utils
-
 from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
 
-
 # COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
 
+jursentmodel = open("/Users/kuhn/PycharmProjects/jursegtok/data/jursentok.hkl")
 
 class Abbreviations(object):
 
@@ -27,7 +24,6 @@ class Abbreviations(object):
         ----------
         filepath
         """
-
         self.filepath = filepath
         self.abbreviation_dic = {}
         self.abbreviations_list = []
@@ -51,21 +47,19 @@ class Abbreviations(object):
 
 class JurSentTokenizer(object):
 
-    def __init__(self, tokenizer='standard', abbrev='legal_abbrv.txt'):
+    def __init__(self, tkn='jursentok'):
 
-        if tokenizer == 'standard': 
+        if tkn == 'standard':
             self.sent_tokenizer = nltk.tokenize.PunktSentenceTokenizer()
-        else: 
-            self.sent_tokenizer = self.get_tokenizer_model(get_data(tokenizer))
-            # self.sent_tokenizer = self.get_tokenizer_model('jursentok.hkl')
-        # self.sent_tokenizer_alt = self.get_tokenizer_model('jursentok1500.hkl')       
-        # must remove ending abbreviation stops to feed as parameters.
-        # inline abbreviation stops are kept
+        elif tkn == 'jursentok':
+            self.sent_tokenizer = self._get_tokenizer_model()
+
         self.jur_abbreviations = self.get_abbreviations()
-        # self.sent_tokenizer._params.abbrev_types.update(set(self.jur_abbreviations))
+
         self.sent_tokenizer._params.abbrev_types.update(set(self.jur_abbreviations))
 
-    def get_abbreviations(self, abbreviations='legal_abbrv.txt'):
+    @staticmethod
+    def get_abbreviations(abbreviations=get_data("legal_abbrv.txt")):
         """
         Reads and prepares abbreviations from a text file found in data.
         param: abbreviations: file
@@ -75,7 +69,8 @@ class JurSentTokenizer(object):
         return set(unicode(abbrev.strip().rstrip('.'))
                    for abbrev in abbrev_file)
 
-    def get_tokenizer_model(self, model='jursentok.hkl'):
+    @staticmethod
+    def _get_tokenizer_model(model=jursentmodel):
         """
         Reads and prepares a pretrained tokenizer model hickle-serialized data.
         param: model: file
@@ -86,7 +81,7 @@ class JurSentTokenizer(object):
         model :
 
         """
-        tokenizer_object = hickle.load(get_data(model), safe=False)
+        tokenizer_object = hickle.load(model, safe=False)
         return tokenizer_object
 
     def sentence_tokenize(self, textdata):
@@ -143,6 +138,7 @@ class JurSentTokenizer(object):
         """
         self.jur_abbreviations.add(unicode(abbreviations))
 
+# todo: rework this method
     def train_tokenizer(self, trainsetpath, setsize=1000):
         """
         (Re-)trains the tokenizer from a given OJCorpusPlain iterator.
@@ -151,7 +147,6 @@ class JurSentTokenizer(object):
         trainsetpath : string - path to the training set
         setsize : int - the number of docs used for training
         """
-
         trainset = corpus.TrainCorpus(trainsetpath)
         trainer = nltk.tokenize.punkt.PunktTrainer()
         trainer.INCLUDE_ALL_COLLOCS = True
