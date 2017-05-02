@@ -1,4 +1,4 @@
-# Domain specific sentence tokenizing for German legal decisions
+# Domain specific sentence tokenizing for German legal decisions [![Code Issues](https://www.quantifiedcode.com/api/v1/project/447cf86a0af9418d8d4e3f58d5002821/badge.svg)](https://www.quantifiedcode.com/app/project/447cf86a0af9418d8d4e3f58d5002821)
 
 this is a modification of the nltk sentence tokenizer to overcome the 
 sentence segmentation problems by the vast amount of abbreviations
