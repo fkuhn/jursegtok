@@ -11,7 +11,7 @@ from segtok import segmenter, segmenter_test, tokenizer
 
 # COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
 
-jursentmodel = open("/Users/kuhn/PycharmProjects/jursegtok/data/jursentok.hkl")
+jursentmodel = open(get_data('jursentok.hkl'))
 
 class Abbreviations(object):
 
