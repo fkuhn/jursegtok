@@ -7,13 +7,11 @@ import pickle
 import corpus
 
 from jursegtok.utils import get_data
-from segtok import segmenter, segmenter_test, tokenizer
 from nltk.tokenize  import WhitespaceTokenizer
-# COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
 
-# jursentmodel = open(get_data('jursentok.hkl'))
-jursentmodel = pickle.load(open(get_data('jursentok.pickle'), mode='r'))
+jursentmodel = pickle.load(get_data('jursentok.pickle'))
 ws_tokenizer = WhitespaceTokenizer()
+
 
 class Abbreviations(object):
 
@@ -83,7 +81,7 @@ class JurSentTokenizer(object):
         model :
 
         """
-        tokenizer_object = pickle.load(model)
+        tokenizer_object = model
         return tokenizer_object
 
     def sentence_tokenize(self, textdata):
