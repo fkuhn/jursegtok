@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import unicode_literals
 import codecs
 
 import nltk
@@ -9,11 +8,13 @@ import corpus
 
 from jursegtok.utils import get_data
 from segtok import segmenter, segmenter_test, tokenizer
-
+from nltk.tokenize  import WhitespaceTokenizer
 # COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
 
 # jursentmodel = open(get_data('jursentok.hkl'))
-jursentmodel = pickle.load(get_data('jursentok.pickle'))
+jursentmodel = pickle.load(open(get_data('jursentok.pickle'), mode='r'))
+ws_tokenizer = WhitespaceTokenizer()
+
 class Abbreviations(object):
 
     def __init__(self, filepath):
@@ -82,7 +83,7 @@ class JurSentTokenizer(object):
         model :
 
         """
-        tokenizer_object = hickle.load(model, safe=False)
+        tokenizer_object = pickle.load(model)
         return tokenizer_object
 
     def sentence_tokenize(self, textdata):
@@ -113,8 +114,8 @@ class JurSentTokenizer(object):
             # TODO: Still not working correctly. Abbreviations are not escaped.
             # rewrite method. indexing is wrong
             # simple tokenizing of the sentence.
-            ws_tk = nltk.tokenize.WhitespaceTokenizer()
-            tokens = ws_tk.tokenize(sentence)
+            # ws_tk = nltk.tokenize.WhitespaceTokenizer()
+            tokens = ws_tokenizer.tokenize(sentence)
 
             # try if index is valid
             if len(tokens) <= 3:
@@ -123,7 +124,7 @@ class JurSentTokenizer(object):
                 tokens[-2] = tokens[-2] + u'.'
                 tokens.remove(tokens[-1])
                 # get the next sentence
-                nextsenttokens = tokenizer.web_tokenizer(sentences[sentences.index(sentence) + 1])
+                nextsenttokens = ws_tokenizer.tokenize(sentences[sentences.index(sentence) + 1])
                 tokens.extend(nextsenttokens)
                 sentence_update = u' '.join(tokens)
                 sentences[sentences.index(sentence)] = sentence_update
