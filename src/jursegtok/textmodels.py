@@ -21,7 +21,13 @@ class Paragraph(Text):
 
 
 class Sentence(Text):
-    pass
+    """
+    defines a sentence.
+    """
+    def __init__(self):
+        pass
+    
+
 
 
 class Statement(Text):

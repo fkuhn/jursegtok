@@ -1,30 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import codecs
-import gzip
-import glob
-import logging
 import os
 import random
 import shutil
-import hickle
+# import hickle
+import pickle
 import numpy
 
-from jursegtok import corpus
+from corpus import OJDocument, OJCorpus
+from tokenizer import JurSentTokenizer
 
 from lxml import etree
 from sklearn.feature_extraction.text import CountVectorizer
 from nltk import tokenize
 from jursegtok.tokenizer import JurSentTokenizer
-from jursegtok.utils import get_data, find_files
-from segtok import tokenizer as segtoktokenizer
-from segtok import segmenter
-print ;
-
+from jursegtok.utils import find_files
+from utils import get_data
 # define constants
 HTML_PARSER = etree.HTMLParser()
 COUNT_TOKENIZER = CountVectorizer().build_tokenizer()
-# JUR_SEGMENTER = hickle.load(get_data('jursentok.hkl'), safe=False)
+JUR_SEGMENTER = pickle.load(get_data('jursentok.pickle'), safe=False)
 
 
 # HEADERS = [u'Rubrum',u'Tenor', u'Tatbestand', u'Gründe', u'Entscheidungsgründe']
@@ -45,18 +41,18 @@ def token_period_freqlist(corp, periods='.', wordnr=1000, minbifrq=1,
     :param ranksize:
     :return:
     """
-    tokenperiods = dict()
-    for doc in corp:
-        tokenlist = doc.whitespace_tokenized()
-        for token in tokenlist:
-            if token[-1] in periods and not tokenperiods.get(token):
-                tokenperiods.update({token: 1})
-            elif token[-1] in periods and tokenperiods.get(token):
-                tpcount = tokenperiods.get(token)
-                tokenperiods.update({token: tpcount+1})
-    tokenperiods_sorted = sorted(tokenperiods.items(),
-                                 key=operator.itemgetter(1))
-    return tokenperiods_sorted
+    # tokenperiods = dict()
+    # for doc in corp:
+    #     tokenlist = doc.whitespace_tokenized()
+    #     for token in tokenlist:
+    #         if token[-1] in periods and not tokenperiods.get(token):
+    #             tokenperiods.update({token: 1})
+    #         elif token[-1] in periods and tokenperiods.get(token):
+    #             tpcount = tokenperiods.get(token)
+    #             tokenperiods.update({token: tpcount+1})
+    # tokenperiods_sorted = sorted(tokenperiods.items(),
+    #                              key=operator.itemgetter(1))
+    # return tokenperiods_sorted
 
 
 def find_tokenpunct(doc):
@@ -125,7 +121,7 @@ def random_sentenced_docs(corpuspath, outputpath='/tmp',
 
         fname = os.path.basename(filepath).split('.')[0]+'.txt'
 
-        doc = corpus.OJDocument(filepath)
+        doc = OJDocument(filepath)
         sentences = doc.sentences()
         with codecs.open(os.path.join(outputpath, fname), mode='w', encoding='utf8') as sent:
             for sentence in sentences:
@@ -172,7 +168,7 @@ def build_hickle_word_sequences(corpuspath, output):
     :param output: path and name of the outputfile
     :return:
     """
-    corp = corpus.OJCorpus(corpuspath, gz=False)
+    corp = OJCorpus(corpuspath, gz=False)
     tkn = tokenize.WordPunctTokenizer()
     outputf = codecs.open(output, encoding='utf8', mode='w')
     for doc in corp:
@@ -182,7 +178,7 @@ def build_hickle_word_sequences(corpuspath, output):
         # must encode to unicode to pass on to hickle
         words = [word.encode('utf8') for word in (tkn.tokenize(doc.plain_text()))]
 
-        hickle.dump(words, outputf, mode='a')
+        pickle.dump(words, outputf)
 
 
 def convert2sentences(corpuspath, outputpath):
@@ -192,7 +188,7 @@ def convert2sentences(corpuspath, outputpath):
     :param outputpath:
     :return:
     """
-    corpus = corpus.OJCorpus(corpuspath)
+    corpus = OJCorpus(corpuspath)
     output = os.path.abspath(outputpath)
     jst = JurSentTokenizer()
     for name, document in corpus:
@@ -219,7 +215,7 @@ def sentencelist2string(sentencelist):
 
 def count_tokens(corpuspath):
     tokens_count = int()
-    tok_generator = sklearn_tokjursent_generator(corpuspath)
+    tok_generator = sklearn_toksent_generator(corpuspath)
     for tokenized_sentence in tok_generator:
         tokenlen = len(tokenized_sentence)
         tokens_count += tokenlen
@@ -252,18 +248,10 @@ def jursegment_sent_generator(document):
 
 
 def sklearn_toksent_generator(corpus_path):
-    ojcorpus = corpus.OJCorpus(corpus_path)
+    ojcorpus = OJCorpus(corpus_path)
     for fname, sentences in ojcorpus:
         for sentence in sentences:
             tokenized_sentence = COUNT_TOKENIZER(sentence)
             if len(tokenized_sentence) > 1:
                 yield tokenized_sentence
 
-
-def sklearn_tokjursent_generator(corpus_path):
-    ojcorpus = OJorpusJurSentTok(corpus_path)
-    for fname, sentences in ojcorpus:
-        for sentence in sentences:
-            tokenized_sentence = COUNT_TOKENIZER(sentence)
-            if len(tokenized_sentence) > 1:
-                yield tokenized_sentence

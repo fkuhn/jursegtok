@@ -17,6 +17,7 @@ from jursegtok.utils import find_files
 HTML_PARSER = etree.HTMLParser()
 ws_tokenizer = WhitespaceTokenizer()
 
+
 class CorpusIndexer(object):
     """
     Indexing of a Corpus with elasticsearch.
