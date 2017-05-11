@@ -9,13 +9,13 @@ import re
 
 
 from lxml import etree
-from segtok import tokenizer as segtoktokenizer
+from nltk.tokenize import WhitespaceTokenizer
 # from gensim.models.doc2vec import TaggedDocument
 from jursegtok.utils import find_files
 # from jursegtok.tokenizer import JurSentTokenizer
 
 HTML_PARSER = etree.HTMLParser()
-
+ws_tokenizer = WhitespaceTokenizer()
 
 class CorpusIndexer(object):
     """
@@ -104,7 +104,7 @@ class OJDocument(object):
                     'document_path': self.document_path,
                     'url': self.url}
         if document_string:
-            metadict.update({'document_string': ' '.join(segtoktokenizer.word_tokenizer(self.plain_text()))})
+            metadict.update({'document_string': ' '.join(ws_tokenizer.tokenize(self.plain_text()))})
         return json.dumps(metadict)
 
     def _get_html_tree(self):
@@ -165,7 +165,7 @@ def tokens(self):
 
     NOTE: This tokenizer does not consider sentence boundaries at all.
     """
-    return segtoktokenizer.word_tokenizer(self.plain_text)
+    return ws_tokenizer.word_tokenizer(self.plain_text)
 
 
 def whitespace_tokenized(self):
