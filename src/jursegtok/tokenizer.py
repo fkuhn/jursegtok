@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 import codecs
 
 import nltk
-import hickle
+# import hickle
+import pickle
 import corpus
 
 from jursegtok.utils import get_data
@@ -11,8 +12,8 @@ from segtok import segmenter, segmenter_test, tokenizer
 
 # COMMON = '/home/kuhn/Dev/github/jursegtok/data/common_abbrv.txt'
 
-jursentmodel = open(get_data('jursentok.hkl'))
-
+# jursentmodel = open(get_data('jursentok.hkl'))
+jursentmodel = pickle.load(get_data('jursentok.pickle'))
 class Abbreviations(object):
 
     def __init__(self, filepath):
