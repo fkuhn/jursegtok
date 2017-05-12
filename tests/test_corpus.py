@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-import pytest
 import codecs
 from jursegtok import corpus
 
