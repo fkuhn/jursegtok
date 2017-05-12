@@ -6,16 +6,21 @@ from jursegtok import corpus
 FREQ_PARAGRAPHS = 12
 FREQ_TOKENS = 123
 
+testdoc = corpus.OJDocument('testdata/test_896152.html')
+paragraphs = testdoc.paragraphs()
+
+
+def setup():
+    with codecs.open("testdata/test_expected.txt", mode='w', encoding='utf-8') as outfile:
+        for para in paragraphs:
+            outfile.write(unicode(para) + "\n")
+
+
 class TestCorpus(object):
     """
     tests if corpus methods work 
     """
-    def setup(self):
-        testdoc = corpus.OJDocument('testdata/test_896152.html')
-        paragraphs = testdoc.paragraphs()
-        with codecs.open("testdata/test_expected.txt", mode='w', encoding='utf-8') as outfile:
-            for para  in paragraphs:
-                outfile.write(unicode(para) + "\n")
+    setup()
         
     def test_paragraphs(self):
         """
