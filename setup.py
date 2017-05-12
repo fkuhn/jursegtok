@@ -24,14 +24,14 @@ setup(name='jursegtok',
     ],
     keywords='tokenization python legal',
     author='Florian Kuhn',
-    author_email='kuhn@ids-mannheim.de',
-    url='www.ids-mannheim.de',
+    author_email='fkuhn@posteo.de',
+    url='www.zeichenkette.de',
     license='Apache v2',
     package_data={
         'jursegtok': ['data/*']
     },
-    packages=find_packages('src'),
-    package_dir = {'': 'src'}, include_package_data=True,
+    packages=find_packages(),
+    package_dir={'': 'src'}, include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
     entry_points={
