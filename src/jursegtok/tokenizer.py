@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 import codecs
-
 import nltk
-# import hickle
 import pickle
 import corpus
 
 from jursegtok.utils import get_data
-from nltk.tokenize  import WhitespaceTokenizer
+from nltk.tokenize import WhitespaceTokenizer
 
 jursentmodel = pickle.load(get_data('jursentok.pickle'))
 ws_tokenizer = WhitespaceTokenizer()
