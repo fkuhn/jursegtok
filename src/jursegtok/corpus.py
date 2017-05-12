@@ -7,12 +7,9 @@ import nltk
 import json
 import re
 
-
 from lxml import etree
 from nltk.tokenize import WhitespaceTokenizer
-# from gensim.models.doc2vec import TaggedDocument
 from jursegtok.utils import find_files
-# from jursegtok.tokenizer import JurSentTokenizer
 
 HTML_PARSER = etree.HTMLParser()
 ws_tokenizer = WhitespaceTokenizer()
@@ -68,14 +65,12 @@ class OJDocument(object):
     def __init__(self, document_path):
         self.document_path = document_path
         tree = self._get_html_tree()
-
         info_tree = tree.xpath("//div[contains(@id, 'info')]")[0]
-
+        # metadata:
         self.file_name = os.path.basename(self.document_path)
         self.creation_date = os.path.getctime(self.document_path)
         self.file_size = os.path.getsize(self.document_path)
         self.court = info_tree.xpath("//ul/li/p/a")[0].text
-        # self.date = info_tree.xpath("//ul/li/p")[0].text
         self.date = info_tree.xpath("//ul/li/p")[1].text
         self.file_id = info_tree.xpath("//ul/li/p")[2].text  # aktenzeichen
         self.verdict_type = info_tree.xpath("//ul/li/p")[3].text  # typ
@@ -83,7 +78,6 @@ class OJDocument(object):
         self.process = info_tree.xpath("//ul/li/p")[5].text
         field_of_law_root = info_tree.xpath("//span[contains(@class, 'rechtsgebiete')]/a")
         self.field_of_law = u', '.join([fol.text for fol in field_of_law_root])
-
         self.url = u'https://openjur.de/u/{}'.format(self.file_name)
 
     def meta2json(self, document_string=False):
@@ -117,16 +111,13 @@ class OJDocument(object):
             logging.error('Assertion Error. No Root: ' + self.document_path)
         return tree
 
-    # @property
     def filename(self):
         return os.path.basename(self.document_path)
 
-    # @property
     def raw_html(self):
         with gzip.open(self.document_path, 'r') as html_file:
             return html_file.read()
 
-    # @property
     def plain_text(self):
         tree = self._get_html_tree()
         return u' '.join(tree.xpath('//article//text()'))
@@ -198,7 +189,7 @@ def train_tokenizer(self, trainsetpath, setsize=1000):
         try:
             trainer.train(document)
             epoch += 1
-        except:
+        except AttributeError:
             continue
     trainer.finalize_training()
     self.sent_tokenizer = trainer.get_params()
